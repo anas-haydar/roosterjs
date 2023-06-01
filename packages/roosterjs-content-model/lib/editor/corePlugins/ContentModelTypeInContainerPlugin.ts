@@ -1,7 +1,12 @@
 import { ContentModelSegmentFormat } from '../../publicTypes/format/ContentModelSegmentFormat';
+import { DeleteResult, OnDeleteEntity } from '../../modelApi/edit/utils/DeleteSelectionStep';
+import { deleteSelection } from '../../modelApi/edit/deleteSelection';
+import { formatWithContentModel } from '../../publicApi/utils/formatWithContentModel';
+import { getObjectKeys, isBlockElement, isCharacterValue, Position } from 'roosterjs-editor-dom';
+import { getOnDeleteEntityCallback } from '../utils/handleKeyboardEventCommon';
 import { getPendingFormat } from '../../modelApi/format/pendingFormat';
 import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
-import { isCharacterValue, Position } from 'roosterjs-editor-dom';
+import { normalizeContentModel } from '../../modelApi/common/normalizeContentModel';
 import { setPendingFormat } from '../../modelApi/format/pendingFormat';
 import {
     EditorPlugin,
@@ -20,6 +25,8 @@ const ProcessKey = 'Process';
  */
 export default class ContentModelTypeInContainerPlugin implements EditorPlugin {
     private editor: IContentModelEditor | null = null;
+    private hasDefaultFormat = false;
+    private onDeleteEntity: OnDeleteEntity | undefined;
 
     /**
      * Get name of this plugin
@@ -37,6 +44,9 @@ export default class ContentModelTypeInContainerPlugin implements EditorPlugin {
     initialize(editor: IEditor) {
         // TODO: Later we may need a different interface for Content Model editor plugin
         this.editor = editor as IContentModelEditor;
+        this.hasDefaultFormat =
+            getObjectKeys(this.editor.getContentModelDefaultFormat()).length > 0;
+        this.onDeleteEntity = getOnDeleteEntityCallback(this.editor);
     }
 
     /**
@@ -46,6 +56,7 @@ export default class ContentModelTypeInContainerPlugin implements EditorPlugin {
      */
     dispose() {
         this.editor = null;
+        this.onDeleteEntity = undefined;
     }
 
     /**
@@ -55,29 +66,62 @@ export default class ContentModelTypeInContainerPlugin implements EditorPlugin {
      * @param event The event to handle:
      */
     onPluginEvent(event: PluginEvent) {
-        const editor = this.editor;
+        if (!this.hasDefaultFormat) {
+            return;
+        }
 
-        if (
+        const editor = this.editor;
+        const rangeEx =
             editor &&
             event.eventType == PluginEventType.KeyDown &&
             (isCharacterValue(event.rawEvent) || event.rawEvent.key == ProcessKey)
-        ) {
-            const range = editor.getSelectionRangeEx();
+                ? editor.getSelectionRangeEx()
+                : null;
+        const range = rangeEx?.type == SelectionRangeTypes.Normal ? rangeEx.ranges[0] : null;
 
-            if (
-                range.type == SelectionRangeTypes.Normal &&
-                range.ranges[0]?.collapsed &&
-                !editor.contains(range.ranges[0].startContainer)
-            ) {
-                const pendingFormat = getPendingFormat(editor) || {};
-                const defaultFormat = editor.getContentModelDefaultFormat();
-                const newFormat: ContentModelSegmentFormat = {
-                    ...defaultFormat,
-                    ...pendingFormat,
-                };
+        if (range && editor) {
+            let pos = Position.getStart(range).normalize();
+            let node: Node | null = pos.element;
 
-                setPendingFormat(editor, newFormat, Position.getStart(range.ranges[0]));
+            while (node && editor.contains(node)) {
+                if ((node as HTMLElement).getAttribute?.('style')) {
+                    return;
+                } else if (isBlockElement(node)) {
+                    break;
+                }
+
+                node = node.parentNode;
             }
+
+            formatWithContentModel(editor, 'input', model => {
+                const result = deleteSelection(model, this.onDeleteEntity!);
+
+                if (result.deleteResult == DeleteResult.Range) {
+                    normalizeContentModel(model);
+                    editor.addUndoSnapshot();
+
+                    return true;
+                } else if (result.deleteResult == DeleteResult.NotDeleted) {
+                    if (
+                        result.insertPoint &&
+                        result.insertPoint.paragraph.segments.every(x => x.segmentType != 'Text')
+                    ) {
+                        const pendingFormat = getPendingFormat(editor) || {};
+                        const defaultFormat = editor.getContentModelDefaultFormat();
+                        const newFormat: ContentModelSegmentFormat = {
+                            ...defaultFormat,
+                            ...pendingFormat,
+                            ...result.insertPoint?.marker.format,
+                        };
+
+                        setPendingFormat(editor, newFormat, Position.getStart(range));
+                    }
+
+                    return false;
+                } else {
+                    return false;
+                }
+            });
         }
     }
 }

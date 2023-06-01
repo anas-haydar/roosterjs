@@ -34,7 +34,11 @@ export function deleteExpandedSelection(
         (path, tableContext, block, segments) => {
             // Set paragraph, format and index for default position where we will put cursor to.
             // Later we can overwrite these info when process the selections
-            let paragraph = createParagraph(true /*implicit*/);
+            let paragraph = createParagraph(
+                true /*implicit*/,
+                undefined /*blockFormat*/,
+                model.format
+            );
             let markerFormat = model.format;
             let insertMarkerIndex = 0;
 
