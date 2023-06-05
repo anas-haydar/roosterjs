@@ -55,7 +55,7 @@ export default function applyPendingFormat(editor: IContentModelEditor, data: st
                                 );
 
                                 block.segments.splice(index, 0, newText);
-                                setParagraphNotImplicit(block);
+                                setParagraphNotImplicit(block, model.format);
                                 isChanged = true;
                             }
                         }

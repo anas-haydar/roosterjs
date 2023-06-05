@@ -50,7 +50,7 @@ export function wrapBlockStep2<T extends ContentModelBlockGroup & ContentModelBl
         const nextBlock = parent.blocks[index + 1];
 
         if (index >= 0 && canMerge(nextBlock, wrapper)) {
-            wrapper.blocks.forEach(setParagraphNotImplicit);
+            setParagraphNotImplicit(wrapper.blocks);
             arrayPush(wrapper.blocks, nextBlock.blocks);
             parent.blocks.splice(index + 1, 1);
         }

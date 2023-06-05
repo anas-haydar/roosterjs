@@ -36,7 +36,7 @@ export const handleListItem: ContentModelBlockHandler<ContentModelListItem> = (
     } else {
         // There is no level for this list item, that means it should be moved out of the list
         // For each paragraph, make it not implicit so it will have a DIV around it, to avoid more paragraphs connected together
-        listItem.blocks.forEach(setParagraphNotImplicit);
+        setParagraphNotImplicit(listItem.blocks);
 
         context.modelHandlers.blockGroupChildren(doc, li, listItem, context);
 

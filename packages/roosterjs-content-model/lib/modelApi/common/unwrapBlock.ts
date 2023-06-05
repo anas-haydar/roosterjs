@@ -12,7 +12,7 @@ export function unwrapBlock(
     const index = parent?.blocks.indexOf(groupToUnwrap) ?? -1;
 
     if (index >= 0) {
-        groupToUnwrap.blocks.forEach(setParagraphNotImplicit);
+        setParagraphNotImplicit(groupToUnwrap.blocks);
 
         parent?.blocks.splice(index, 1, ...groupToUnwrap.blocks);
     }
