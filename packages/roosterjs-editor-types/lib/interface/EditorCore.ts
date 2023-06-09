@@ -265,6 +265,7 @@ export type SetContent = (
 export type SwitchShadowEdit = (core: EditorCore, isOn: boolean) => void;
 
 /**
+ * @deprecated
  * Edit and transform color of elements between light mode and dark mode
  * @param core The EditorCore object
  * @param rootNode The root HTML node to transform
@@ -466,6 +467,7 @@ export interface CoreApiMap {
     switchShadowEdit: SwitchShadowEdit;
 
     /**
+     * @deprecated
      * Edit and transform color of elements between light mode and dark mode
      * @param core The EditorCore object
      * @param rootNode The root HTML element to transform

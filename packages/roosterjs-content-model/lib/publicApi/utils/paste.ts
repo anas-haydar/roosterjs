@@ -1,6 +1,7 @@
 import ContentModelBeforePasteEvent from '../../publicTypes/event/ContentModelBeforePasteEvent';
 import domToContentModel from '../../domToModel/domToContentModel';
 import { BeforePasteEvent, NodePosition } from 'roosterjs-editor-types';
+import { ColorManager } from 'roosterjs-editor-core';
 import { formatWithContentModel } from './formatWithContentModel';
 import { getOnDeleteEntityCallback } from '../../editor/utils/handleKeyboardEventCommon';
 import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
@@ -64,8 +65,7 @@ export default function paste(
     const pasteModel = domToContentModel(
         fragment,
         {
-            isDarkMode: editor.isDarkMode(),
-            darkColorHandler: editor.getDarkColorHandler(),
+            darkColorHandler: new ColorManager(),
             defaultFormat: editor.getDefaultFormat(),
         },
         {

@@ -74,7 +74,7 @@ export const ensureTypeInContainer: EnsureTypeInContainer = (
         applyFormat(
             formatNode,
             core.lifecycle.defaultFormat,
-            core.lifecycle.isDarkMode,
+            core.darkColorHandler.isDarkMode,
             core.darkColorHandler
         );
     }

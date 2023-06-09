@@ -19,6 +19,7 @@ export default interface LifecyclePluginState {
     defaultFormat: DefaultFormat | null;
 
     /**
+     * @deprecated
      * Whether editor is in dark mode
      */
     isDarkMode: boolean;

@@ -38,9 +38,9 @@ export default interface Snapshot {
     metadata: ContentMetadata | null;
 
     /**
-     * Known colors for dark mode
+     * @deprecated
      */
-    knownColors: Readonly<ModeIndependentColor>[];
+    knownColors?: Readonly<ModeIndependentColor>[];
 
     /**
      * Entity states related to this undo snapshots. When undo/redo to this snapshot, each entity state will trigger

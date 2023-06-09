@@ -18,7 +18,7 @@ import { arrayPush } from 'roosterjs-editor-dom';
 import { ContentModelEditor } from 'roosterjs-content-model';
 import { ContentModelRibbonPlugin } from './ribbonButtons/contentModel/ContentModelRibbonPlugin';
 import { darkMode, DarkModeButtonStringKey } from './ribbonButtons/darkMode';
-import { EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
+import { EditorOptions, EditorPlugin, ModeIndependentColor } from 'roosterjs-editor-types';
 import { ExportButtonStringKey, exportContent } from './ribbonButtons/export';
 import { getDarkColor } from 'roosterjs-color-utils';
 import { PartialTheme, ThemeProvider } from '@fluentui/react/lib/Theme';
@@ -132,6 +132,7 @@ class MainPane extends MainPaneBase {
     private sampleEntityPlugin: SampleEntityPlugin;
     private mainWindowButtons: RibbonButton<RibbonStringKeys>[];
     private popoutWindowButtons: RibbonButton<RibbonStringKeys>[];
+    private knownColors: Record<string, ModeIndependentColor> = {};
 
     private content: string = '';
 
@@ -393,6 +394,7 @@ class MainPane extends MainPaneBase {
                             defaultFormat={this.state.initState.defaultFormat}
                             inDarkMode={this.state.isDarkMode}
                             getDarkColor={getDarkColor}
+                            knownColors={this.knownColors}
                             experimentalFeatures={this.state.initState.experimentalFeatures}
                             undoMetadataSnapshotService={this.snapshotPlugin.getSnapshotService()}
                             trustedHTMLHandler={trustedHTMLHandler}

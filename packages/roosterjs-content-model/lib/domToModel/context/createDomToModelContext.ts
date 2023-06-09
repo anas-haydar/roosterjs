@@ -1,3 +1,4 @@
+import { ColorManager } from 'roosterjs-editor-core';
 import { defaultFormatParsers, getFormatParsers } from '../../formatHandlers/defaultFormatHandlers';
 import { defaultProcessorMap } from './defaultProcessors';
 import { defaultStyleMap } from '../../formatHandlers/utils/defaultStyles';
@@ -15,7 +16,7 @@ export function createDomToModelContext(
 ): DomToModelContext {
     const context: DomToModelContext = {
         ...(editorContext || {
-            isDarkMode: false,
+            darkColorHandler: new ColorManager(),
         }),
 
         blockFormat: {},

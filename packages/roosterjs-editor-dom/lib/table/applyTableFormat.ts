@@ -1,5 +1,4 @@
 import changeElementTag from '../utils/changeElementTag';
-import setColor from '../utils/setColor';
 import { getTableCellMetadata } from './tableCellInfo';
 import { TableBorderFormat, TableFormat, VCell } from 'roosterjs-editor-types';
 const TRANSPARENT = 'transparent';
@@ -51,30 +50,30 @@ function setCellColor(cells: VCell[][], format: TableFormat) {
         row.forEach(cell => {
             if (cell.td && !hasCellShade(cell)) {
                 if (hasBandedRows) {
-                    const backgroundColor = color(index);
-                    setColor(
-                        cell.td,
-                        backgroundColor || TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+                    // const backgroundColor = color(index);
+                    // setColor(
+                    //     cell.td,
+                    //     backgroundColor || TRANSPARENT,
+                    //     true /** isBackgroundColor*/,
+                    //     undefined /** isDarkMode **/,
+                    //     true /** shouldAdaptFontColor */
+                    // );
                 } else if (shouldColorWholeTable) {
-                    setColor(
-                        cell.td,
-                        format.bgColorOdd || TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+                    // setColor(
+                    //     cell.td,
+                    //     format.bgColorOdd || TRANSPARENT,
+                    //     true /** isBackgroundColor*/,
+                    //     undefined /** isDarkMode **/,
+                    //     true /** shouldAdaptFontColor */
+                    // );
                 } else {
-                    setColor(
-                        cell.td,
-                        TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+                    // setColor(
+                    //     cell.td,
+                    //     TRANSPARENT,
+                    //     true /** isBackgroundColor*/,
+                    //     undefined /** isDarkMode **/,
+                    //     true /** shouldAdaptFontColor */
+                    // );
                 }
             }
         });
@@ -84,13 +83,13 @@ function setCellColor(cells: VCell[][], format: TableFormat) {
             row.forEach((cell, index) => {
                 const backgroundColor = color(index);
                 if (cell.td && backgroundColor && !hasCellShade(cell)) {
-                    setColor(
-                        cell.td,
-                        backgroundColor,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+                    // setColor(
+                    //     cell.td,
+                    //     backgroundColor,
+                    //     true /** isBackgroundColor*/,
+                    //     undefined /** isDarkMode **/,
+                    //     true /** shouldAdaptFontColor */
+                    // );
                 }
             });
         });
@@ -282,13 +281,13 @@ function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
             if (cell.td && cellIndex === 0) {
                 if (rowIndex !== 0 && !hasCellShade(cell)) {
                     cell.td.style.borderTopColor = TRANSPARENT;
-                    setColor(
-                        cell.td,
-                        TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+                    // setColor(
+                    //     cell.td,
+                    //     TRANSPARENT,
+                    //     true /** isBackgroundColor*/,
+                    //     undefined /** isDarkMode **/,
+                    //     true /** shouldAdaptFontColor */
+                    // );
                 }
                 if (rowIndex !== cells.length - 1 && rowIndex !== 0) {
                     cell.td.style.borderBottomColor = TRANSPARENT;
@@ -318,13 +317,13 @@ function setHeaderRowFormat(cells: VCell[][], format: TableFormat) {
     cells[0]?.forEach(cell => {
         if (cell.td && format.headerRowColor) {
             if (!hasCellShade(cell)) {
-                setColor(
-                    cell.td,
-                    format.headerRowColor,
-                    true /** isBackgroundColor*/,
-                    undefined /** isDarkMode **/,
-                    true /** shouldAdaptFontColor */
-                );
+                // setColor(
+                //     cell.td,
+                //     format.headerRowColor,
+                //     true /** isBackgroundColor*/,
+                //     undefined /** isDarkMode **/,
+                //     true /** shouldAdaptFontColor */
+                // );
             }
             cell.td.style.borderRightColor = format.headerRowColor;
             cell.td.style.borderLeftColor = format.headerRowColor;

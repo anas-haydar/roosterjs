@@ -4,7 +4,8 @@
     "dependencies": {
         "tslib": "^2.3.1",
         "roosterjs-editor-types": "",
-        "roosterjs-editor-dom": ""
+        "roosterjs-editor-dom": "",
+        "roosterjs-color-utils": ""
     },
     "main": "./lib/index.ts"
 }

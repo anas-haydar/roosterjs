@@ -3,11 +3,9 @@ import {
     BlockElement,
     ChangeSource,
     ClipboardData,
-    ColorTransformDirection,
     ContentChangedData,
     ContentPosition,
     CoreCreator,
-    DarkColorHandler,
     DefaultFormat,
     DOMEventHandler,
     EditorCore,
@@ -65,6 +63,7 @@ import type {
     CompatiblePluginEventType,
     CompatibleQueryScope,
     CompatibleRegionType,
+    DarkColorHandler,
 } from 'roosterjs-editor-types/lib/compatibleTypes';
 
 /**
@@ -174,13 +173,9 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         const core = this.getCore();
         // Only replace the node when it falls within editor
         if (this.contains(existingNode) && toNode) {
-            core.api.transformColor(
-                core,
-                transformColorForDarkMode ? toNode : null,
-                true /*includeSelf*/,
-                () => existingNode.parentNode?.replaceChild(toNode, existingNode),
-                ColorTransformDirection.LightToDark
-            );
+            if (transformColorForDarkMode) {
+                core.darkColorHandler.formatColor(toNode, true /*includeSelf*/);
+            }
 
             return true;
         }
@@ -868,19 +863,6 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         if (isDarkMode == !!nextDarkMode) {
             return;
         }
-        const core = this.getCore();
-
-        core.api.transformColor(
-            core,
-            core.contentDiv,
-            false /*includeSelf*/,
-            null /*callback*/,
-            nextDarkMode
-                ? ColorTransformDirection.LightToDark
-                : ColorTransformDirection.DarkToLight,
-            true /*forceTransform*/,
-            isDarkMode
-        );
 
         this.triggerContentChangedEvent(
             nextDarkMode ? ChangeSource.SwitchToDarkMode : ChangeSource.SwitchToLightMode
@@ -892,7 +874,7 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
      * @returns True if the editor is in dark mode, otherwise false
      */
     public isDarkMode(): boolean {
-        return this.getCore().lifecycle.isDarkMode;
+        return this.getCore().darkColorHandler.isDarkMode;
     }
 
     /**
@@ -901,13 +883,7 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
      */
     public transformToDarkColor(node: Node) {
         const core = this.getCore();
-        core.api.transformColor(
-            core,
-            node,
-            true /*includeSelf*/,
-            null /*callback*/,
-            ColorTransformDirection.LightToDark
-        );
+        core.darkColorHandler.formatColor(node, true /*includeSelf*/);
     }
 
     /**

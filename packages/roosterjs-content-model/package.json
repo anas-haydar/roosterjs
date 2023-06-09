@@ -5,7 +5,8 @@
         "tslib": "^2.3.1",
         "roosterjs-editor-types": "",
         "roosterjs-editor-dom": "",
-        "roosterjs-editor-core": ""
+        "roosterjs-editor-core": "",
+        "roosterjs-color-utils": ""
     },
     "main": "./lib/index.ts",
     "version": "0.0.1"

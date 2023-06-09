@@ -6,7 +6,6 @@ import {
 } from 'roosterjs-editor-dom';
 import {
     ChangeSource,
-    ColorTransformDirection,
     ContentMetadata,
     EditorCore,
     PluginEventType,
@@ -56,18 +55,8 @@ export const setContent: SetContent = (
         contentChanged = true;
     }
 
-    const isDarkMode = core.lifecycle.isDarkMode;
-
-    if ((!metadata && isDarkMode) || (metadata && !!metadata.isDarkMode != !!isDarkMode)) {
-        core.api.transformColor(
-            core,
-            core.contentDiv,
-            false /*includeSelf*/,
-            null /*callback*/,
-            isDarkMode ? ColorTransformDirection.LightToDark : ColorTransformDirection.DarkToLight,
-            true /*forceTransform*/,
-            metadata?.isDarkMode
-        );
+    if (!metadata?.isColorFormatted) {
+        core.darkColorHandler.formatColor(core.contentDiv, false /*includeSelf*/);
         contentChanged = true;
     }
 

@@ -1,6 +1,7 @@
 import CorePlugins from './CorePlugins';
 import DefaultFormat from './DefaultFormat';
 import EditorPlugin from './EditorPlugin';
+import ModeIndependentColor from './ModeIndependentColor';
 import Rect from './Rect';
 import Snapshot from './Snapshot';
 import UndoSnapshotsService from './UndoSnapshotsService';
@@ -138,4 +139,6 @@ export default interface EditorOptions {
      * Color of the border of a selectedImage. Default color: '#DB626C'
      */
     imageSelectionBorderColor?: string;
+
+    knownColors?: Record<string, ModeIndependentColor>;
 }
