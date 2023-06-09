@@ -43,7 +43,7 @@ export default class SnapshotPane extends React.Component<SnapshotPaneProps, Sna
                             this.props.onRestoreSnapshot({
                                 html: this.textarea.value,
                                 metadata: null,
-                                knownColors: [],
+                                // knownColors: [],
                             })
                         }>
                         {'Restore snapshot'}

@@ -1,14 +1,14 @@
 import { ContentModelSegmentFormat } from '../format/ContentModelSegmentFormat';
-import { DarkColorHandler } from 'roosterjs-editor-types';
+import { IDarkColorHandlerV2 } from 'roosterjs-editor-types';
 
 /**
  * An editor context interface used by ContentModel PAI
  */
 export interface EditorContext {
-    /**
-     * Whether current content is in dark mode
-     */
-    isDarkMode: boolean;
+    // /**
+    //  * Whether current content is in dark mode
+    //  */
+    // isDarkMode: boolean;
 
     /**
      * Default format of editor
@@ -18,7 +18,7 @@ export interface EditorContext {
     /**
      * Dark model color handler
      */
-    darkColorHandler?: DarkColorHandler | null;
+    darkColorHandler: IDarkColorHandlerV2;
 
     /**
      * Whether to handle delimiters in Content Model

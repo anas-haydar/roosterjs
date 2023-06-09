@@ -34,16 +34,16 @@ export const restoreUndoSnapshot: RestoreUndoSnapshot = (core: EditorCore, step:
                 snapshot.metadata ?? undefined
             );
 
-            const darkColorHandler = core.darkColorHandler;
-            const isDarkModel = core.lifecycle.isDarkMode;
+            // const darkColorHandler = core.darkColorHandler;
+            // const isDarkModel = core.lifecycle.isDarkMode;
 
-            snapshot.knownColors.forEach(color => {
-                darkColorHandler.registerColor(
-                    color.lightModeColor,
-                    isDarkModel,
-                    color.darkModeColor
-                );
-            });
+            // snapshot.knownColors.forEach(color => {
+            //     darkColorHandler.registerColor(
+            //         color.lightModeColor,
+            //         isDarkModel,
+            //         color.darkModeColor
+            //     );
+            // });
 
             snapshot.entityStates?.forEach(entityState => {
                 const { type, id, state } = entityState;

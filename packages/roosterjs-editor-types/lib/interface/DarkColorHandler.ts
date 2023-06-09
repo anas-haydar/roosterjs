@@ -58,3 +58,17 @@ export default interface DarkColorHandler {
      */
     findLightColorFromDarkColor(darkColor: string): string | null;
 }
+
+export interface IDarkColorHandlerV2 {
+    isDarkMode: boolean;
+
+    getColor(element: HTMLElement, isBackground: boolean): string;
+    setColor(
+        element: HTMLElement,
+        isBackground: boolean,
+        color: string,
+        skipDarkColor?: boolean
+    ): void;
+    transformElements(root: Node, includeSelf: boolean, isApplying: boolean): void;
+    dispose(): void;
+}

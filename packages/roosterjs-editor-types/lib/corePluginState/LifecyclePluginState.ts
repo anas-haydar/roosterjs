@@ -21,7 +21,7 @@ export default interface LifecyclePluginState {
     /**
      * Whether editor is in dark mode
      */
-    isDarkMode: boolean;
+    // isDarkMode: boolean;
 
     /**
      * Calculate dark mode color from light mode color

@@ -18,7 +18,6 @@ import { selectRange } from './selectRange';
 import { selectTable } from './selectTable';
 import { setContent } from './setContent';
 import { switchShadowEdit } from './switchShadowEdit';
-import { transformColor } from './transformColor';
 import { triggerEvent } from './triggerEvent';
 
 /**
@@ -42,7 +41,6 @@ export const coreApiMap: CoreApiMap = {
     selectRange,
     setContent,
     switchShadowEdit,
-    transformColor,
     triggerEvent,
     selectTable,
     selectImage,

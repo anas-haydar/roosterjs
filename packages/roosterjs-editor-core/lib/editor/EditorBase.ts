@@ -3,11 +3,9 @@ import {
     BlockElement,
     ChangeSource,
     ClipboardData,
-    ColorTransformDirection,
     ContentChangedData,
     ContentPosition,
     CoreCreator,
-    DarkColorHandler,
     DefaultFormat,
     DOMEventHandler,
     EditorCore,
@@ -65,6 +63,7 @@ import type {
     CompatiblePluginEventType,
     CompatibleQueryScope,
     CompatibleRegionType,
+    IDarkColorHandlerV2,
 } from 'roosterjs-editor-types/lib/compatibleTypes';
 
 /**
@@ -112,7 +111,7 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
             core.plugins[i].dispose();
         }
 
-        core.darkColorHandler.reset();
+        core.darkColorHandler.dispose();
 
         this.core = null;
     }
@@ -174,12 +173,10 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         const core = this.getCore();
         // Only replace the node when it falls within editor
         if (this.contains(existingNode) && toNode) {
-            core.api.transformColor(
-                core,
-                transformColorForDarkMode ? toNode : null,
+            core.darkColorHandler.transformElements(
+                toNode,
                 true /*includeSelf*/,
-                () => existingNode.parentNode?.replaceChild(toNode, existingNode),
-                ColorTransformDirection.LightToDark
+                true /*isApplying*/
             );
 
             return true;
@@ -868,19 +865,19 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         if (isDarkMode == !!nextDarkMode) {
             return;
         }
-        const core = this.getCore();
+        // const core = this.getCore();
 
-        core.api.transformColor(
-            core,
-            core.contentDiv,
-            false /*includeSelf*/,
-            null /*callback*/,
-            nextDarkMode
-                ? ColorTransformDirection.LightToDark
-                : ColorTransformDirection.DarkToLight,
-            true /*forceTransform*/,
-            isDarkMode
-        );
+        // core.api.transformColor(
+        //     core,
+        //     core.contentDiv,
+        //     false /*includeSelf*/,
+        //     null /*callback*/,
+        //     nextDarkMode
+        //         ? ColorTransformDirection.LightToDark
+        //         : ColorTransformDirection.DarkToLight,
+        //     true /*forceTransform*/,
+        //     isDarkMode
+        // );
 
         this.triggerContentChangedEvent(
             nextDarkMode ? ChangeSource.SwitchToDarkMode : ChangeSource.SwitchToLightMode
@@ -892,7 +889,7 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
      * @returns True if the editor is in dark mode, otherwise false
      */
     public isDarkMode(): boolean {
-        return this.getCore().lifecycle.isDarkMode;
+        return this.getCore().darkColorHandler.isDarkMode;
     }
 
     /**
@@ -901,19 +898,13 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
      */
     public transformToDarkColor(node: Node) {
         const core = this.getCore();
-        core.api.transformColor(
-            core,
-            node,
-            true /*includeSelf*/,
-            null /*callback*/,
-            ColorTransformDirection.LightToDark
-        );
+        core.darkColorHandler.transformElements(node, true /*includeSelf*/, true /*isApplying*/);
     }
 
     /**
      * Get a darkColorHandler object for this editor.
      */
-    public getDarkColorHandler(): DarkColorHandler {
+    public getDarkColorHandler(): IDarkColorHandlerV2 {
         return this.getCore().darkColorHandler;
     }
 

@@ -1,8 +1,8 @@
 import createCorePlugins, { getPluginState } from '../corePlugins/createCorePlugins';
-import DarkColorHandlerImpl from './DarkColorHandlerImpl';
 import { arrayPush, getIntersectedRect, getObjectKeys } from 'roosterjs-editor-dom';
 import { coreApiMap } from '../coreApi/coreApiMap';
 import { CoreCreator, EditorCore, EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
+import { DarkColorHandlerImplV2 } from './DarkColorHandlerImpl2';
 
 /**
  * Create a new instance of Editor Core
@@ -37,6 +37,12 @@ export const createEditorCore: CoreCreator<EditorCore, EditorOptions> = (content
             );
         });
 
+    const darkColorHandler = new DarkColorHandlerImplV2(
+        getOnRegisterColor(contentDiv),
+        pluginState.lifecycle.getDarkColor,
+        !!options.inDarkMode
+    );
+
     const core: EditorCore = {
         contentDiv,
         api: {
@@ -51,8 +57,16 @@ export const createEditorCore: CoreCreator<EditorCore, EditorOptions> = (content
         sizeTransformer: options.sizeTransformer || ((size: number) => size / zoomScale),
         getVisibleViewport,
         imageSelectionBorderColor: options.imageSelectionBorderColor,
-        darkColorHandler: new DarkColorHandlerImpl(contentDiv, pluginState.lifecycle.getDarkColor),
+        darkColorHandler,
     };
 
     return core;
 };
+
+function getOnRegisterColor(
+    contentDiv: HTMLElement
+): (key: string, darkColor: string | null) => void {
+    return (key, darkColor) => {
+        contentDiv.style.setProperty(key, darkColor);
+    };
+}

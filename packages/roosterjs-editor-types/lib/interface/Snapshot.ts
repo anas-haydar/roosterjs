@@ -1,4 +1,3 @@
-import ModeIndependentColor from './ModeIndependentColor';
 import { ContentMetadata } from './ContentMetadata';
 
 /**
@@ -40,7 +39,7 @@ export default interface Snapshot {
     /**
      * Known colors for dark mode
      */
-    knownColors: Readonly<ModeIndependentColor>[];
+    // knownColors: Readonly<ModeIndependentColor>[];
 
     /**
      * Entity states related to this undo snapshots. When undo/redo to this snapshot, each entity state will trigger

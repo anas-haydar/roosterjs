@@ -1,7 +1,6 @@
 import BlockElement from './BlockElement';
 import ClipboardData from './ClipboardData';
 import ContentChangedData from './ContentChangedData';
-import DarkColorHandler from './DarkColorHandler';
 import DefaultFormat from './DefaultFormat';
 import IContentTraverser from './IContentTraverser';
 import IPositionContentSearcher from './IPositionContentSearcher';
@@ -17,6 +16,7 @@ import { EditorUndoState, PendableFormatState, StyleBasedFormatState } from './F
 import { ExperimentalFeatures } from '../enum/ExperimentalFeatures';
 import { GenericContentEditFeature } from './ContentEditFeature';
 import { GetContentMode } from '../enum/GetContentMode';
+import { IDarkColorHandlerV2 } from './DarkColorHandler';
 import { InsertOption } from './InsertOption';
 import { PluginEvent } from '../event/PluginEvent';
 import { PluginEventData, PluginEventFromType } from '../event/PluginEventData';
@@ -599,7 +599,7 @@ export default interface IEditor {
     /**
      * Get a darkColorHandler object for this editor.
      */
-    getDarkColorHandler(): DarkColorHandler;
+    getDarkColorHandler(): IDarkColorHandlerV2;
 
     /**
      * Make the editor in "Shadow Edit" mode.

@@ -24,18 +24,18 @@ const CoordinatesDefinition = createObjectDefinition<Coordinates>({
     y: createNumberDefinition(),
 });
 
-const IsDarkModeDefinition = createBooleanDefinition(true /*isOptional*/);
+const HasDarkColorInfoDefinition = createBooleanDefinition(true /*isOptional*/);
 
 const NormalContentMetadataDefinition = createObjectDefinition<NormalContentMetadata>({
     type: createNumberDefinition(true /*isOptional*/, SelectionRangeTypes.Normal),
-    isDarkMode: IsDarkModeDefinition,
+    hasDarkColorInfo: HasDarkColorInfoDefinition,
     start: NumberArrayDefinition,
     end: NumberArrayDefinition,
 });
 
 const TableContentMetadataDefinition = createObjectDefinition<TableContentMetadata>({
     type: createNumberDefinition(false /*isOptional*/, SelectionRangeTypes.TableSelection),
-    isDarkMode: IsDarkModeDefinition,
+    hasDarkColorInfo: HasDarkColorInfoDefinition,
     tableId: createStringDefinition(),
     firstCell: CoordinatesDefinition,
     lastCell: CoordinatesDefinition,
@@ -43,7 +43,7 @@ const TableContentMetadataDefinition = createObjectDefinition<TableContentMetada
 
 const ImageContentMetadataDefinition = createObjectDefinition<ImageContentMetadata>({
     type: createNumberDefinition(false /*isOptional*/, SelectionRangeTypes.ImageSelection),
-    isDarkMode: IsDarkModeDefinition,
+    hasDarkColorInfo: HasDarkColorInfoDefinition,
     imageId: createStringDefinition(),
 });
 
@@ -109,7 +109,8 @@ export function extractContentMetadata(rootNode: HTMLElement): ContentMetadata |
             ) {
                 rootNode.removeChild(potentialMetadataComment);
                 obj.type = typeof obj.type === 'undefined' ? SelectionRangeTypes.Normal : obj.type;
-                obj.isDarkMode = obj.isDarkMode || false;
+                obj.hasDarkColorInfo = obj.hasDarkColorInfo || false;
+                // obj.isDarkMode = obj.isDarkMode || false;
 
                 return obj;
             }

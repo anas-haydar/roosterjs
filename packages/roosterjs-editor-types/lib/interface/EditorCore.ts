@@ -1,16 +1,15 @@
 import ClipboardData from './ClipboardData';
 import ContentChangedData from './ContentChangedData';
-import DarkColorHandler from './DarkColorHandler';
 import EditorPlugin from './EditorPlugin';
 import NodePosition from './NodePosition';
 import Rect from './Rect';
 import SelectionPath from './SelectionPath';
 import TableSelection from './TableSelection';
 import { ChangeSource } from '../enum/ChangeSource';
-import { ColorTransformDirection } from '../enum/ColorTransformDirection';
 import { ContentMetadata } from './ContentMetadata';
 import { DOMEventHandler } from '../type/domEventHandler';
 import { GetContentMode } from '../enum/GetContentMode';
+import { IDarkColorHandlerV2 } from './DarkColorHandler';
 import { ImageSelectionRange, SelectionRangeEx } from './SelectionRangeEx';
 import { InsertOption } from './InsertOption';
 import { PendableFormatState, StyleBasedFormatState } from './FormatState';
@@ -21,7 +20,6 @@ import { SizeTransformer } from '../type/SizeTransformer';
 import { TableSelectionRange } from './SelectionRangeEx';
 import { TrustedHTMLHandler } from '../type/TrustedHTMLHandler';
 import type { CompatibleChangeSource } from '../compatibleEnum/ChangeSource';
-import type { CompatibleColorTransformDirection } from '../compatibleEnum/ColorTransformDirection';
 import type { CompatibleGetContentMode } from '../compatibleEnum/GetContentMode';
 /**
  * Represents the core data structure of an editor
@@ -80,7 +78,7 @@ export default interface EditorCore extends PluginState {
      * Dark model handler for the editor, used for variable-based solution.
      * If keep it null, editor will still use original dataset-based dark mode solution.
      */
-    darkColorHandler: DarkColorHandler;
+    darkColorHandler: IDarkColorHandlerV2;
 }
 
 /**
@@ -264,26 +262,26 @@ export type SetContent = (
  */
 export type SwitchShadowEdit = (core: EditorCore, isOn: boolean) => void;
 
-/**
- * Edit and transform color of elements between light mode and dark mode
- * @param core The EditorCore object
- * @param rootNode The root HTML node to transform
- * @param includeSelf True to transform the root node as well, otherwise false
- * @param callback The callback function to invoke before do color transformation
- * @param direction To specify the transform direction, light to dark, or dark to light
- * @param forceTransform By default this function will only work when editor core is in dark mode.
- * Pass true to this value to force do color transformation even editor core is in light mode
- * @param fromDarkModel Whether the given content is already in dark mode
- */
-export type TransformColor = (
-    core: EditorCore,
-    rootNode: Node | null,
-    includeSelf: boolean,
-    callback: (() => void) | null,
-    direction: ColorTransformDirection | CompatibleColorTransformDirection,
-    forceTransform?: boolean,
-    fromDarkMode?: boolean
-) => void;
+// /**
+//  * Edit and transform color of elements between light mode and dark mode
+//  * @param core The EditorCore object
+//  * @param rootNode The root HTML node to transform
+//  * @param includeSelf True to transform the root node as well, otherwise false
+//  * @param callback The callback function to invoke before do color transformation
+//  * @param direction To specify the transform direction, light to dark, or dark to light
+//  * @param forceTransform By default this function will only work when editor core is in dark mode.
+//  * Pass true to this value to force do color transformation even editor core is in light mode
+//  * @param fromDarkModel Whether the given content is already in dark mode
+//  */
+// export type TransformColor = (
+//     core: EditorCore,
+//     rootNode: Node | null,
+//     includeSelf: boolean,
+//     callback: (() => void) | null,
+//     direction: ColorTransformDirection | CompatibleColorTransformDirection,
+//     forceTransform?: boolean,
+//     fromDarkMode?: boolean
+// ) => void;
 
 /**
  * Trigger a plugin event
@@ -465,18 +463,18 @@ export interface CoreApiMap {
      */
     switchShadowEdit: SwitchShadowEdit;
 
-    /**
-     * Edit and transform color of elements between light mode and dark mode
-     * @param core The EditorCore object
-     * @param rootNode The root HTML element to transform
-     * @param includeSelf True to transform the root node as well, otherwise false
-     * @param callback The callback function to invoke before do color transformation
-     * @param direction To specify the transform direction, light to dark, or dark to light
-     * @param forceTransform By default this function will only work when editor core is in dark mode.
-     * Pass true to this value to force do color transformation even editor core is in light mode
-     * @param fromDarkModel Whether the given content is already in dark mode
-     */
-    transformColor: TransformColor;
+    // /**
+    //  * Edit and transform color of elements between light mode and dark mode
+    //  * @param core The EditorCore object
+    //  * @param rootNode The root HTML element to transform
+    //  * @param includeSelf True to transform the root node as well, otherwise false
+    //  * @param callback The callback function to invoke before do color transformation
+    //  * @param direction To specify the transform direction, light to dark, or dark to light
+    //  * @param forceTransform By default this function will only work when editor core is in dark mode.
+    //  * Pass true to this value to force do color transformation even editor core is in light mode
+    //  * @param fromDarkModel Whether the given content is already in dark mode
+    //  */
+    // transformColor: TransformColor;
 
     /**
      * Trigger a plugin event

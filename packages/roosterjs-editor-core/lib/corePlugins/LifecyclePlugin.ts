@@ -1,4 +1,4 @@
-import { Browser, getObjectKeys, setColor } from 'roosterjs-editor-dom';
+import { Browser, getObjectKeys } from 'roosterjs-editor-dom';
 import {
     DocumentCommand,
     EditorOptions,
@@ -81,23 +81,17 @@ export default class LifecyclePlugin implements PluginWithState<LifecyclePluginS
             ? () => {}
             : () => {
                   const { textColors, backgroundColors } = DARK_MODE_DEFAULT_FORMAT;
-                  const { isDarkMode } = this.state;
                   const darkColorHandler = this.editor?.getDarkColorHandler();
-                  setColor(
+
+                  darkColorHandler?.setColor(
                       contentDiv,
-                      textColors,
                       false /*isBackground*/,
-                      isDarkMode,
-                      false /*shouldAdaptFontColor*/,
-                      darkColorHandler
+                      textColors.lightModeColor
                   );
-                  setColor(
+                  darkColorHandler?.setColor(
                       contentDiv,
-                      backgroundColors,
                       true /*isBackground*/,
-                      isDarkMode,
-                      false /*shouldAdaptFontColor*/,
-                      darkColorHandler
+                      backgroundColors.lightModeColor
                   );
               };
 
@@ -125,7 +119,6 @@ export default class LifecyclePlugin implements PluginWithState<LifecyclePluginS
         this.state = {
             customData: {},
             defaultFormat,
-            isDarkMode: !!options.inDarkMode,
             getDarkColor,
             onExternalContentTransform: options.onExternalContentTransform ?? null,
             experimentalFeatures: options.experimentalFeatures || [],
@@ -205,11 +198,13 @@ export default class LifecyclePlugin implements PluginWithState<LifecyclePluginS
      */
     onPluginEvent(event: PluginEvent) {
         if (
+            this.editor &&
             event.eventType == PluginEventType.ContentChanged &&
             (event.source == ChangeSource.SwitchToDarkMode ||
                 event.source == ChangeSource.SwitchToLightMode)
         ) {
-            this.state.isDarkMode = event.source == ChangeSource.SwitchToDarkMode;
+            this.editor.getDarkColorHandler().isDarkMode =
+                event.source == ChangeSource.SwitchToDarkMode;
             this.adjustColor();
         }
     }

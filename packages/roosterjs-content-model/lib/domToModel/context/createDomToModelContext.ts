@@ -1,3 +1,4 @@
+import { DarkColorHandlerImplV2 } from 'roosterjs-editor-core/lib/editor/DarkColorHandlerImpl2';
 import { defaultFormatParsers, getFormatParsers } from '../../formatHandlers/defaultFormatHandlers';
 import { defaultProcessorMap } from './defaultProcessors';
 import { defaultStyleMap } from '../../formatHandlers/utils/defaultStyles';
@@ -5,6 +6,8 @@ import { DomToModelContext } from '../../publicTypes/context/DomToModelContext';
 import { DomToModelOption } from '../../publicTypes/IContentModelEditor';
 import { EditorContext } from '../../publicTypes/context/EditorContext';
 import { SelectionRangeTypes } from 'roosterjs-editor-types';
+
+const globalDarkHandler = new DarkColorHandlerImplV2();
 
 /**
  * @internal
@@ -15,7 +18,7 @@ export function createDomToModelContext(
 ): DomToModelContext {
     const context: DomToModelContext = {
         ...(editorContext || {
-            isDarkMode: false,
+            darkColorHandler: globalDarkHandler,
         }),
 
         blockFormat: {},

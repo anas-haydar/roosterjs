@@ -1,4 +1,4 @@
-import { isCharacterValue, Position, setColor } from 'roosterjs-editor-dom';
+import { isCharacterValue, Position } from 'roosterjs-editor-dom';
 import {
     ChangeSource,
     IEditor,
@@ -144,7 +144,6 @@ export default class PendingFormatStatePlugin
         if (!span && this.editor) {
             const currentStyle = this.editor.getStyleBasedFormatState();
             const doc = this.editor.getDocument();
-            const isDarkMode = this.editor.isDarkMode();
 
             span = doc.createElement('span');
             span.contentEditable = 'true';
@@ -154,27 +153,16 @@ export default class PendingFormatStatePlugin
             span.style.setProperty('font-size', currentStyle.fontSize ?? null);
 
             const darkColorHandler = this.editor.getDarkColorHandler();
+            const textColor = currentStyle.textColors?.lightModeColor || currentStyle.textColor;
+            const backColor =
+                currentStyle.backgroundColors?.lightModeColor || currentStyle.backgroundColor;
 
-            if (currentStyle.textColors || currentStyle.textColor) {
-                setColor(
-                    span,
-                    (currentStyle.textColors || currentStyle.textColor)!,
-                    false /*isBackground*/,
-                    isDarkMode,
-                    false /*shouldAdaptFontColor*/,
-                    darkColorHandler
-                );
+            if (textColor) {
+                darkColorHandler.setColor(span, false /*isBackground*/, textColor);
             }
 
-            if (currentStyle.backgroundColors || currentStyle.backgroundColor) {
-                setColor(
-                    span,
-                    (currentStyle.backgroundColors || currentStyle.backgroundColor)!,
-                    true /*isBackground*/,
-                    isDarkMode,
-                    false /*shouldAdaptFontColor*/,
-                    darkColorHandler
-                );
+            if (backColor) {
+                darkColorHandler.setColor(span, true /*isBackground*/, backColor);
             }
         }
 
