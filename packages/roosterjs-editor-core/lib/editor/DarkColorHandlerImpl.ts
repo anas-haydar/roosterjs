@@ -51,7 +51,7 @@ export default class DarkColorHandlerImpl extends ColorManager implements DarkCo
      * @param isDarkMode Whether current color mode is dark mode
      * @param darkModeColor Optional dark mode color value. If not passed, we will calculate one.
      */
-    private _registerColor(key: string, darkModeColor?: string) {
+    private _registerColor(key: string, darkModeColor?: string | null) {
         if (this.contentDiv) {
             if (darkModeColor) {
                 this.contentDiv.style.setProperty(key, darkModeColor);
