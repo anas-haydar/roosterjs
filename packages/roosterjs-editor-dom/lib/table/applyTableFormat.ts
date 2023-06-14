@@ -24,7 +24,7 @@ export default function applyTableFormat(
     table.style.borderCollapse = 'collapse';
     setBordersType(cells, format);
     setCellColor(cells, format, darkColorHandler);
-    setFirstColumnFormat(cells, format);
+    setFirstColumnFormat(cells, format, darkColorHandler);
     setHeaderRowFormat(cells, format, darkColorHandler);
 }
 
@@ -273,7 +273,11 @@ function setBordersType(cells: VCell[][], format: TableFormat) {
  * @param format
  * @returns
  */
-function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
+function setFirstColumnFormat(
+    cells: VCell[][],
+    format: Partial<TableFormat>,
+    darkColorHandler: DarkColorHandler
+) {
     if (!format.hasFirstColumn) {
         cells.forEach(row => {
             row.forEach((cell, cellIndex) => {
@@ -293,13 +297,14 @@ function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
             if (cell.td && cellIndex === 0) {
                 if (rowIndex !== 0 && !hasCellShade(cell)) {
                     cell.td.style.borderTopColor = TRANSPARENT;
-                    // setColor(
-                    //     cell.td,
-                    //     TRANSPARENT,
-                    //     true /** isBackgroundColor*/,
-                    //     undefined /** isDarkMode **/,
-                    //     true /** shouldAdaptFontColor */
-                    // );
+                    setColor(
+                        cell.td,
+                        TRANSPARENT,
+                        true /** isBackgroundColor*/,
+                        undefined /** isDarkMode **/,
+                        true /** shouldAdaptFontColor */,
+                        darkColorHandler
+                    );
                 }
                 if (rowIndex !== cells.length - 1 && rowIndex !== 0) {
                     cell.td.style.borderBottomColor = TRANSPARENT;
