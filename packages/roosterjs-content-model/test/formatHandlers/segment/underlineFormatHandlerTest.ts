@@ -3,9 +3,12 @@ import { createModelToDomContext } from '../../../lib/modelToDom/context/createM
 import { DomToModelContext } from '../../../lib/publicTypes/context/DomToModelContext';
 import { ModelToDomContext } from '../../../lib/publicTypes/context/ModelToDomContext';
 import { UnderlineFormat } from '../../../lib/publicTypes/format/formatParts/UnderlineFormat';
-import { underlineFormatHandler } from '../../../lib/formatHandlers/segment/underlineFormatHandler';
+import {
+    blockUnderlineFormatHandler,
+    underlineFormatHandler,
+} from '../../../lib/formatHandlers/segment/underlineFormatHandler';
 
-xdescribe('underlineFormatHandler.parse', () => {
+describe('underlineFormatHandler.parse', () => {
     let div: HTMLElement;
     let context: DomToModelContext;
     let format: UnderlineFormat;
@@ -82,7 +85,7 @@ xdescribe('underlineFormatHandler.parse', () => {
     });
 });
 
-xdescribe('underlineFormatHandler.apply', () => {
+describe('underlineFormatHandler.apply', () => {
     let div: HTMLElement;
     let format: UnderlineFormat;
     let context: ModelToDomContext;
@@ -153,10 +156,89 @@ xdescribe('underlineFormatHandler.apply', () => {
 
         a.textContent = 'test';
 
-        context.implicitFormat.underline = true;
+        format.underline = false;
 
         underlineFormatHandler.apply(format, a, context);
 
-        expect(a.outerHTML).toEqual('<a style="text-decoration: none;">test</a>');
+        expect(a.outerHTML).toEqual('<a>test</a>');
+    });
+});
+
+describe('blockUnderlineFormatHandler.apply', () => {
+    let div: HTMLElement;
+    let format: UnderlineFormat;
+    let context: ModelToDomContext;
+
+    beforeEach(() => {
+        div = document.createElement('div');
+        format = {};
+        context = createModelToDomContext();
+    });
+
+    it('no underline', () => {
+        blockUnderlineFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('underline is false', () => {
+        format.underline = false;
+
+        blockUnderlineFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('Has underline', () => {
+        format.underline = true;
+
+        blockUnderlineFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="text-decoration: underline;"></div>');
+    });
+
+    it('Has underline with text', () => {
+        format.underline = true;
+        div.innerHTML = 'test';
+
+        blockUnderlineFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="text-decoration: underline;">test</div>');
+    });
+
+    it('Hyperlink without context', () => {
+        const a = document.createElement('a');
+
+        a.textContent = 'test';
+        format.underline = true;
+
+        blockUnderlineFormatHandler.apply(format, a, context);
+
+        expect(a.outerHTML).toEqual('<a style="text-decoration: underline;">test</a>');
+    });
+
+    it('Hyperlink with context', () => {
+        const a = document.createElement('a');
+
+        a.textContent = 'test';
+        format.underline = true;
+
+        context.implicitFormat.underline = true;
+
+        blockUnderlineFormatHandler.apply(format, a, context);
+
+        expect(a.outerHTML).toEqual('<a>test</a>');
+    });
+
+    it('Hyperlink without underline', () => {
+        const a = document.createElement('a');
+
+        a.textContent = 'test';
+
+        context.implicitFormat.underline = true;
+
+        blockUnderlineFormatHandler.apply(format, a, context);
+
+        expect(a.outerHTML).toEqual('<a>test</a>');
     });
 });

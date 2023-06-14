@@ -1,5 +1,6 @@
 import { backgroundColorFormatHandler } from './common/backgroundColorFormatHandler';
-import { boldFormatHandler } from './segment/boldFormatHandler';
+import { blockBoldFormatHandler, boldFormatHandler } from './segment/boldFormatHandler';
+import { blockItalicFormatHandler, italicFormatHandler } from './segment/italicFormatHandler';
 import { borderBoxFormatHandler } from './common/borderBoxFormatHandler';
 import { borderFormatHandler } from './common/borderFormatHandler';
 import { boxShadowFormatHandler } from './common/boxShadowFormatHandler';
@@ -14,7 +15,6 @@ import { FormatHandlerTypeMap, FormatKey } from '../publicTypes/format/FormatHan
 import { getObjectKeys } from 'roosterjs-editor-dom';
 import { htmlAlignFormatHandler } from './block/htmlAlignFormatHandler';
 import { idFormatHandler } from './common/idFormatHandler';
-import { italicFormatHandler } from './segment/italicFormatHandler';
 import { letterSpacingFormatHandler } from './segment/letterSpacingFormatHandler';
 import { lineHeightFormatHandler } from './block/lineHeightFormatHandler';
 import { linkFormatHandler } from './segment/linkFormatHandler';
@@ -33,10 +33,13 @@ import { tableSpacingFormatHandler } from './table/tableSpacingFormatHandler';
 import { textAlignFormatHandler } from './block/textAlignFormatHandler';
 import { textColorFormatHandler } from './segment/textColorFormatHandler';
 import { textColorOnTableCellFormatHandler } from './table/textColorOnTableCellFormatHandler';
-import { underlineFormatHandler } from './segment/underlineFormatHandler';
 import { verticalAlignFormatHandler } from './common/verticalAlignFormatHandler';
 import { whiteSpaceFormatHandler } from './block/whiteSpaceFormatHandler';
 import { wordBreakFormatHandler } from './common/wordBreakFormatHandler';
+import {
+    blockUnderlineFormatHandler,
+    underlineFormatHandler,
+} from './segment/underlineFormatHandler';
 import {
     FormatApplier,
     FormatAppliers,
@@ -55,6 +58,7 @@ type FormatHandlers = {
 const defaultFormatHandlerMap: FormatHandlers = {
     backgroundColor: backgroundColorFormatHandler,
     bold: boldFormatHandler,
+    boldOnBlock: blockBoldFormatHandler,
     border: borderFormatHandler,
     borderBox: borderBoxFormatHandler,
     boxShadow: boxShadowFormatHandler,
@@ -66,6 +70,7 @@ const defaultFormatHandlerMap: FormatHandlers = {
     htmlAlign: htmlAlignFormatHandler,
     id: idFormatHandler,
     italic: italicFormatHandler,
+    italicOnBlock: blockItalicFormatHandler,
     letterSpacing: letterSpacingFormatHandler,
     lineHeight: lineHeightFormatHandler,
     link: linkFormatHandler,
@@ -85,6 +90,7 @@ const defaultFormatHandlerMap: FormatHandlers = {
     textColor: textColorFormatHandler,
     textColorOnTableCell: textColorOnTableCellFormatHandler,
     underline: underlineFormatHandler,
+    underlineOnBlock: blockUnderlineFormatHandler,
     verticalAlign: verticalAlignFormatHandler,
     whiteSpace: whiteSpaceFormatHandler,
     wordBreak: wordBreakFormatHandler,
@@ -95,10 +101,6 @@ const sharedSegmentFormats: (keyof FormatHandlerTypeMap)[] = [
     'strike',
     'fontFamily',
     'fontSize',
-    'underline',
-    'superOrSubScript',
-    'italic',
-    'bold',
 ];
 const sharedBlockFormats: (keyof FormatHandlerTypeMap)[] = [
     'direction',
@@ -129,9 +131,30 @@ const defaultFormatKeysPerCategory: {
         'padding',
         'listStylePosition',
     ],
-    segment: [...sharedSegmentFormats, 'textColor', 'backgroundColor', 'lineHeight'],
-    segmentOnBlock: [...sharedSegmentFormats, 'textColor'],
-    segmentOnTableCell: [...sharedSegmentFormats, 'textColorOnTableCell'],
+    segment: [
+        ...sharedSegmentFormats,
+        'underline',
+        'superOrSubScript',
+        'italic',
+        'bold',
+        'textColor',
+        'backgroundColor',
+        'lineHeight',
+    ],
+    segmentOnBlock: [
+        ...sharedSegmentFormats,
+        'underlineOnBlock',
+        'italicOnBlock',
+        'boldOnBlock',
+        'textColor',
+    ],
+    segmentOnTableCell: [
+        ...sharedSegmentFormats,
+        'underlineOnBlock',
+        'italicOnBlock',
+        'boldOnBlock',
+        'textColorOnTableCell',
+    ],
     tableCell: [
         'border',
         'backgroundColor',

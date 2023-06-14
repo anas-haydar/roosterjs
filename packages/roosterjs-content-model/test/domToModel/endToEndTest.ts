@@ -1528,4 +1528,38 @@ describe('End to end test for DOM => Model', () => {
             '<span style="color: red;"><a style="color: red; display: block;" href="#">test</a></span>'
         );
     });
+
+    it('Segment format on block', () => {
+        runTest(
+            '<div style="font-weight: bold; font-style: italic; text-decoration: underline line-through">test</div>',
+            {
+                blockGroupType: 'Document',
+                blocks: [
+                    {
+                        blockType: 'Paragraph',
+                        segments: [
+                            {
+                                segmentType: 'Text',
+                                text: 'test',
+                                format: {
+                                    strikethrough: true,
+                                    underline: true,
+                                    italic: true,
+                                    fontWeight: 'bold',
+                                },
+                            },
+                        ],
+                        format: {},
+                        segmentFormat: {
+                            strikethrough: true,
+                            underline: true,
+                            italic: true,
+                            fontWeight: 'bold',
+                        },
+                    },
+                ],
+            },
+            '<div style="text-decoration: underline; font-style: italic; font-weight: bold;"><s>test</s></div>'
+        );
+    });
 });

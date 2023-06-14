@@ -2,8 +2,11 @@ import { createDomToModelContext } from '../../../lib/domToModel/context/createD
 import { createModelToDomContext } from '../../../lib/modelToDom/context/createModelToDomContext';
 import { DomToModelContext } from '../../../lib/publicTypes/context/DomToModelContext';
 import { ItalicFormat } from '../../../lib/publicTypes/format/formatParts/ItalicFormat';
-import { italicFormatHandler } from '../../../lib/formatHandlers/segment/italicFormatHandler';
 import { ModelToDomContext } from '../../../lib/publicTypes/context/ModelToDomContext';
+import {
+    italicFormatHandler,
+    blockItalicFormatHandler,
+} from '../../../lib/formatHandlers/segment/italicFormatHandler';
 
 describe('italicFormatHandler.parse', () => {
     let div: HTMLElement;
@@ -119,5 +122,48 @@ describe('italicFormatHandler.apply', () => {
         italicFormatHandler.apply(format, div, context);
 
         expect(div.outerHTML).toEqual('<div><i>test</i></div>');
+    });
+});
+
+describe('blockItalicFormatHandler.apply', () => {
+    let div: HTMLElement;
+    let format: ItalicFormat;
+    let context: ModelToDomContext;
+
+    beforeEach(() => {
+        div = document.createElement('div');
+        format = {};
+        context = createModelToDomContext();
+    });
+
+    it('no italic', () => {
+        blockItalicFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('Italic is false', () => {
+        format.italic = false;
+
+        blockItalicFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('Has italic', () => {
+        format.italic = true;
+
+        blockItalicFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-style: italic;"></div>');
+    });
+
+    it('Has italic with text', () => {
+        format.italic = true;
+        div.innerHTML = 'test';
+
+        blockItalicFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-style: italic;">test</div>');
     });
 });

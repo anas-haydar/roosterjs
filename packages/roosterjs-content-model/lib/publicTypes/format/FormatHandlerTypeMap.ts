@@ -46,6 +46,11 @@ export interface FormatHandlerTypeMap {
     bold: BoldFormat;
 
     /**
+     * Format for BoldFormat, for block element
+     */
+    boldOnBlock: BoldFormat;
+
+    /**
      * Format for BorderFormat
      */
     border: BorderFormat;
@@ -99,6 +104,11 @@ export interface FormatHandlerTypeMap {
      * Format for ItalicFormat
      */
     italic: ItalicFormat;
+
+    /**
+     * Format for ItalicFormat, for block element
+     */
+    italicOnBlock: ItalicFormat;
 
     /**
      * Format for LetterSpacingFormat
@@ -194,6 +204,11 @@ export interface FormatHandlerTypeMap {
      * Format for UnderlineFormat
      */
     underline: UnderlineFormat;
+
+    /**
+     * Format for UnderlineFormat, for block element
+     */
+    underlineOnBlock: UnderlineFormat;
 
     /**
      * Format for VerticalAlignFormat

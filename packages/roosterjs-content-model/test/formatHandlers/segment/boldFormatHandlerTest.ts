@@ -1,9 +1,12 @@
 import { BoldFormat } from '../../../lib/publicTypes/format/formatParts/BoldFormat';
-import { boldFormatHandler } from '../../../lib/formatHandlers/segment/boldFormatHandler';
 import { createDomToModelContext } from '../../../lib/domToModel/context/createDomToModelContext';
 import { createModelToDomContext } from '../../../lib/modelToDom/context/createModelToDomContext';
 import { DomToModelContext } from '../../../lib/publicTypes/context/DomToModelContext';
 import { ModelToDomContext } from '../../../lib/publicTypes/context/ModelToDomContext';
+import {
+    blockBoldFormatHandler,
+    boldFormatHandler,
+} from '../../../lib/formatHandlers/segment/boldFormatHandler';
 
 describe('boldFormatHandler.parse', () => {
     let div: HTMLElement;
@@ -154,6 +157,79 @@ describe('boldFormatHandler.apply', () => {
         format.fontWeight = 'bold';
 
         boldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div>test</div>');
+    });
+});
+
+describe('blockBoldFormatHandler.apply', () => {
+    let div: HTMLElement;
+    let format: BoldFormat;
+    let context: ModelToDomContext;
+
+    beforeEach(() => {
+        div = document.createElement('div');
+        format = {};
+        context = createModelToDomContext();
+    });
+
+    it('no bold', () => {
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('Set bold to false', () => {
+        format.fontWeight = 'normal';
+
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div></div>');
+    });
+
+    it('Set bold to true', () => {
+        format.fontWeight = 'bold';
+
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-weight: bold;"></div>');
+    });
+
+    it('Set bold to true with content', () => {
+        format.fontWeight = 'bold';
+        div.innerHTML = 'test';
+
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-weight: bold;">test</div>');
+    });
+
+    it('Turn off bold when there is bold from block', () => {
+        div.innerHTML = 'test';
+        context.implicitFormat.fontWeight = 'bold';
+        format.fontWeight = 'normal';
+
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-weight: normal;">test</div>');
+    });
+
+    it('Change bold when there is bold from block', () => {
+        div.innerHTML = 'test';
+        context.implicitFormat.fontWeight = 'bold';
+        format.fontWeight = '600';
+
+        blockBoldFormatHandler.apply(format, div, context);
+
+        expect(div.outerHTML).toEqual('<div style="font-weight: 600;">test</div>');
+    });
+
+    it('No change when bold from block and same with current format', () => {
+        div.innerHTML = 'test';
+        context.implicitFormat.fontWeight = 'bold';
+        format.fontWeight = 'bold';
+
+        blockBoldFormatHandler.apply(format, div, context);
 
         expect(div.outerHTML).toEqual('<div>test</div>');
     });
