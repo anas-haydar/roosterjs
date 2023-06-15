@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiPaneProps from '../ApiPaneProps';
-import { getDarkColor } from 'roosterjs-color-utils';
+import { invertColor } from 'roosterjs-editor-dom';
 
 interface GetDarkColorPaneState {
     lightColor: string;
@@ -60,7 +60,7 @@ export default class GetDarkColorPane extends React.Component<ApiPaneProps, GetD
         let darkColor = '';
 
         try {
-            darkColor = getDarkColor(lightColor);
+            darkColor = invertColor(lightColor);
         } catch (e) {
             darkColor = e;
         }

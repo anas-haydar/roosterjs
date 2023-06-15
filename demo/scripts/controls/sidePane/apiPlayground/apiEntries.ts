@@ -56,8 +56,8 @@ const apiEntries: { [key: string]: ApiEntry } = {
         name: 'VTable',
         component: VTablePane,
     },
-    getDarkColor: {
-        name: 'getDarkColor',
+    invertColor: {
+        name: 'invertColor',
         component: GetDarkColorPane,
     },
     getSelection: {

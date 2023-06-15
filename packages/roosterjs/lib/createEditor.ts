@@ -1,7 +1,6 @@
+import { ContentEdit, HyperLink, Paste } from 'roosterjs-editor-plugins';
 import { Editor } from 'roosterjs-editor-core';
 import { EditorOptions, EditorPlugin, IEditor } from 'roosterjs-editor-types';
-import { getDarkColor } from 'roosterjs-color-utils';
-import { ContentEdit, HyperLink, Paste } from 'roosterjs-editor-plugins';
 
 /**
  * Create an editor instance with most common options
@@ -25,7 +24,6 @@ export default function createEditor(
     let options: EditorOptions = {
         plugins: plugins,
         initialContent: initialContent,
-        getDarkColor: getDarkColor,
         defaultFormat: {
             fontFamily: 'Calibri,Arial,Helvetica,sans-serif',
             fontSize: '11pt',

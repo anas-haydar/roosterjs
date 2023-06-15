@@ -1,6 +1,5 @@
 import createEditorCore from './createMockEditorCore';
 import { ColorTransformDirection, DarkColorHandler } from 'roosterjs-editor-types';
-import { getDarkColor } from 'roosterjs-color-utils';
 import { itChromeOnly } from '../TestHelper';
 import { transformColor } from '../../lib/coreApi/transformColor';
 
@@ -25,7 +24,6 @@ describe('transform to dark mode v2', () => {
     ) {
         const core = createEditorCore(div, {
             inDarkMode: false,
-            getDarkColor,
         });
         const parseColorValue = jasmine
             .createSpy('parseColorValue')
@@ -128,9 +126,7 @@ describe('transform to light mode v2', () => {
         expectedParseValueCalls: string[],
         expectedRegisterColorCalls: [string, boolean, string][]
     ) {
-        const core = createEditorCore(div, {
-            getDarkColor,
-        });
+        const core = createEditorCore(div, {});
         const parseColorValue = jasmine
             .createSpy('parseColorValue')
             .and.callFake((color: string) => ({

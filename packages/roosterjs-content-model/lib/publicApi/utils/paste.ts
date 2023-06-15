@@ -6,6 +6,7 @@ import { getOnDeleteEntityCallback } from '../../editor/utils/handleKeyboardEven
 import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
 import { mergeModel } from '../../modelApi/common/mergeModel';
 import {
+    ColorManager,
     createDefaultHtmlSanitizerOptions,
     getPasteType,
     handleImagePaste,
@@ -64,8 +65,7 @@ export default function paste(
     const pasteModel = domToContentModel(
         fragment,
         {
-            isDarkMode: editor.isDarkMode(),
-            darkColorHandler: editor.getDarkColorHandler(),
+            darkColorHandler: new ColorManager(),
             defaultFormat: editor.getDefaultFormat(),
         },
         {

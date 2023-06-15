@@ -2,6 +2,7 @@ const HEX3_REGEX = /^#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/;
 const HEX6_REGEX = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/;
 const RGB_REGEX = /^rgb\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*\)$/;
 const RGBA_REGEX = /^rgba\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*\)$/;
+const DefaultBaseLValue = 21.247; // L-value of #333333
 
 /**
  * Parse color string to r/g/b value.
@@ -26,4 +27,45 @@ export default function parseColor(color: string): [number, number, number] | nu
         // If need, we can add those colors from https://www.w3.org/wiki/CSS/Properties/color/keywords
         return null;
     }
+}
+
+/**
+ * Calculate lightness of a color
+ * @param color The color to calculate
+ * @returns Lightness value of the color, from 0 (darkest) to 255 (lightest)
+ */
+export function calculateLightness(color: string) {
+    const colorValues = parseColor(color);
+
+    // Use the values of r,g,b to calculate the lightness in the HSl representation
+    // First calculate the fraction of the light in each color, since in css the value of r,g,b is in the interval of [0,255], we have
+    if (colorValues) {
+        const red = colorValues[0] / 255;
+        const green = colorValues[1] / 255;
+        const blue = colorValues[2] / 255;
+
+        //Then the lightness in the HSL representation is the average between maximum fraction of r,g,b and the minimum fraction
+        return (Math.max(red, green, blue) + Math.min(red, green, blue)) * 50;
+    } else {
+        return 255;
+    }
+}
+
+/**
+ * Get dark mode color for a given color
+ * @param color The color to calculate from
+ * @param baseLValue The Light value for base dark color in LAB format. @default the Light value for #333333
+ */
+export function invertColor(color: string, baseLightness: number = DefaultBaseLValue): string {
+    // try {
+    //     const computedColor = Color(color || undefined);
+    //     const colorLab = computedColor.lab().array();
+    //     const newLValue = (100 - colorLab[0]) * ((100 - baseLValue) / 100) + baseLValue;
+    //     color = Color.lab(newLValue, colorLab[1], colorLab[2])
+    //         .rgb()
+    //         .alpha(computedColor.alpha())
+    //         .toString();
+    // } catch {}
+
+    return color;
 }

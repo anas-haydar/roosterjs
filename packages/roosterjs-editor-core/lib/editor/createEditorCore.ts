@@ -51,7 +51,14 @@ export const createEditorCore: CoreCreator<EditorCore, EditorOptions> = (content
         sizeTransformer: options.sizeTransformer || ((size: number) => size / zoomScale),
         getVisibleViewport,
         imageSelectionBorderColor: options.imageSelectionBorderColor,
-        darkColorHandler: new DarkColorHandlerImpl(contentDiv, pluginState.lifecycle.getDarkColor),
+        darkColorHandler: new DarkColorHandlerImpl(
+            options.getDarkColor,
+            contentDiv,
+            !!options.inDarkMode,
+            options.knownColors,
+            undefined /*baseDarkColor*/,
+            options.onExternalContentTransform
+        ),
     };
 
     return core;

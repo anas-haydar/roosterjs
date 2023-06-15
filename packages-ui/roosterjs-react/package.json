@@ -8,8 +8,7 @@
         "roosterjs-editor-dom": "",
         "roosterjs-editor-core": "",
         "roosterjs-editor-api": "",
-        "roosterjs-editor-plugins": "",
-        "roosterjs-color-utils": ""
+        "roosterjs-editor-plugins": ""
     },
     "peerDependencies": {
         "react": ">=16.0.0",
