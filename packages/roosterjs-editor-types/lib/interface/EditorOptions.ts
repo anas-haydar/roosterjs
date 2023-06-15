@@ -79,7 +79,7 @@ export default interface EditorOptions {
      * A util function to transform light mode color to dark mode color
      * Default value is to return the original light color
      */
-    getDarkColor?: (lightColor: string) => string;
+    getDarkColor?: (lightColor: string, baseLValue?: number) => string;
 
     /**
      * Whether to skip the adjust editor process when for light/dark mode

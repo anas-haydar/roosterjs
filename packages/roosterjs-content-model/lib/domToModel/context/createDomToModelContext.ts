@@ -1,4 +1,4 @@
-import { ColorManager } from 'roosterjs-editor-core';
+import { ColorManager } from 'roosterjs-editor-dom';
 import { defaultFormatParsers, getFormatParsers } from '../../formatHandlers/defaultFormatHandlers';
 import { defaultProcessorMap } from './defaultProcessors';
 import { defaultStyleMap } from '../../formatHandlers/utils/defaultStyles';

@@ -1,7 +1,6 @@
 import formatUndoSnapshot from '../utils/formatUndoSnapshot';
-import { getLValueFromColor } from 'roosterjs-color-utils';
+import { calculateLightness, safeInstanceOf, saveTableCellMetadata } from 'roosterjs-editor-dom';
 import { IEditor, ModeIndependentColor } from 'roosterjs-editor-types';
-import { safeInstanceOf, saveTableCellMetadata } from 'roosterjs-editor-dom';
 
 //Using the HSL (hue, saturation and lightness) representation for RGB color values, if the value of the lightness is less than 20, the color is dark
 const DARK_COLORS_LIGHTNESS = 20;
@@ -27,7 +26,7 @@ export default function applyCellShading(editor: IEditor, color: string | ModeIn
 
                     darkColorHandler.setColor(region.rootNode, true /*isBackgroundColor*/, color);
 
-                    const lightness = getLValueFromColor(
+                    const lightness = calculateLightness(
                         typeof color == 'string' ? color : color.lightModeColor
                     );
 

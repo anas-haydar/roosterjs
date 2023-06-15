@@ -6,6 +6,7 @@ import {
     ContentChangedData,
     ContentPosition,
     CoreCreator,
+    DarkColorHandler,
     DefaultFormat,
     DOMEventHandler,
     EditorCore,
@@ -63,7 +64,6 @@ import type {
     CompatiblePluginEventType,
     CompatibleQueryScope,
     CompatibleRegionType,
-    DarkColorHandler,
 } from 'roosterjs-editor-types/lib/compatibleTypes';
 
 /**
@@ -878,6 +878,7 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
     }
 
     /**
+     * @deprecated
      * Transform the given node and all its child nodes to dark mode color if editor is in dark mode
      * @param node The node to transform
      */

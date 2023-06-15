@@ -13,7 +13,7 @@ const BackColorAttributeName: Record<ColorAttributeEnum, string> = {
     [ColorAttributeEnum.HtmlColor]: 'bgcolor',
 };
 
-export class ColorManager implements IColorManager {
+export default class ColorManager implements IColorManager {
     getColor(element: HTMLElement, isBackground: boolean): string {
         const color =
             element.style.getPropertyValue(

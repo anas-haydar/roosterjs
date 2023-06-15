@@ -1,12 +1,12 @@
 import ContentModelBeforePasteEvent from '../../publicTypes/event/ContentModelBeforePasteEvent';
 import domToContentModel from '../../domToModel/domToContentModel';
 import { BeforePasteEvent, NodePosition } from 'roosterjs-editor-types';
-import { ColorManager } from 'roosterjs-editor-core';
 import { formatWithContentModel } from './formatWithContentModel';
 import { getOnDeleteEntityCallback } from '../../editor/utils/handleKeyboardEventCommon';
 import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
 import { mergeModel } from '../../modelApi/common/mergeModel';
 import {
+    ColorManager,
     createDefaultHtmlSanitizerOptions,
     getPasteType,
     handleImagePaste,

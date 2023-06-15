@@ -1,5 +1,5 @@
+import { calculateLightness } from 'roosterjs-editor-dom';
 import { ContentModelTableCell } from '../../publicTypes/group/ContentModelTableCell';
-import { getLValueFromColor } from 'roosterjs-color-utils';
 import { updateTableCellMetadata } from '../../domUtils/metadata/updateTableCellMetadata';
 
 // Using the HSL (hue, saturation and lightness) representation for RGB color values.
@@ -29,7 +29,7 @@ export function setTableCellBackgroundColor(
             });
         }
 
-        const lightness = getLValueFromColor(color);
+        const lightness = calculateLightness(color);
 
         if (lightness < DARK_COLORS_LIGHTNESS) {
             cell.format.textColor = White;

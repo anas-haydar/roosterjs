@@ -1,7 +1,10 @@
 import { ColorKeyAndValue, DarkColorHandler, ModeIndependentColor } from 'roosterjs-editor-types';
-import { ColorManager } from './ColorManager';
-import { getDarkColor, getLValueFromColor } from 'roosterjs-color-utils';
-import { getObjectKeys, safeInstanceOf } from 'roosterjs-editor-dom';
+import {
+    calculateLightness,
+    ColorManager,
+    getObjectKeys,
+    safeInstanceOf,
+} from 'roosterjs-editor-dom';
 
 const VARIABLE_REGEX = /^\s*var\(\s*(\-\-[a-zA-Z0-9\-_]+)\s*(?:,\s*(.*))?\)\s*$/;
 const VARIABLE_PREFIX = 'var(';
@@ -12,6 +15,7 @@ export default class DarkColorHandlerImpl extends ColorManager implements DarkCo
     private baseLValue: number;
 
     constructor(
+        private getDarkColor: (color: string, baseLValue?: number) => string = color => color,
         private contentDiv?: HTMLElement,
         isDarkMode: boolean = false,
         private knownColors: Record<string, Readonly<ModeIndependentColor>> = {},
@@ -20,7 +24,7 @@ export default class DarkColorHandlerImpl extends ColorManager implements DarkCo
         super();
 
         this.darkMode = isDarkMode;
-        this.baseLValue = getLValueFromColor(baseDarkColor);
+        this.baseLValue = calculateLightness(baseDarkColor);
         this.resetContainerColors(this.isDarkMode);
     }
 
@@ -83,7 +87,8 @@ export default class DarkColorHandlerImpl extends ColorManager implements DarkCo
             if (!this.knownColors[colorKey]) {
                 const modeIndependentColor: ModeIndependentColor = {
                     lightModeColor,
-                    darkModeColor: darkModeColor || getDarkColor(lightModeColor, this.baseLValue),
+                    darkModeColor:
+                        darkModeColor || this.getDarkColor(lightModeColor, this.baseLValue),
                 };
 
                 this.knownColors[colorKey] = modeIndependentColor;

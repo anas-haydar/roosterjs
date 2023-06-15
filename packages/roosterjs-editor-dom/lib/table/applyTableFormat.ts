@@ -1,5 +1,5 @@
 import changeElementTag from '../utils/changeElementTag';
-import setColor from '../utils/setColor';
+import setColor from '../style/setColor';
 import { DarkColorHandler, TableBorderFormat, TableFormat, VCell } from 'roosterjs-editor-types';
 import { getTableCellMetadata } from './tableCellInfo';
 const TRANSPARENT = 'transparent';
@@ -276,7 +276,7 @@ function setBordersType(cells: VCell[][], format: TableFormat) {
 function setFirstColumnFormat(
     cells: VCell[][],
     format: Partial<TableFormat>,
-    darkColorHandler: DarkColorHandler
+    darkColorHandler?: DarkColorHandler | null
 ) {
     if (!format.hasFirstColumn) {
         cells.forEach(row => {

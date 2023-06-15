@@ -52,6 +52,7 @@ export const createEditorCore: CoreCreator<EditorCore, EditorOptions> = (content
         getVisibleViewport,
         imageSelectionBorderColor: options.imageSelectionBorderColor,
         darkColorHandler: new DarkColorHandlerImpl(
+            options.getDarkColor,
             contentDiv,
             !!options.inDarkMode,
             options.knownColors

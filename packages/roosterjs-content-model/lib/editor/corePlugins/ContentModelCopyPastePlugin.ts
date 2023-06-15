@@ -1,7 +1,6 @@
 import contentModelToDom from '../../modelToDom/contentModelToDom';
 import paste from '../../publicApi/utils/paste';
 import { cloneModel } from '../../modelApi/common/cloneModel';
-import { ColorManager } from 'roosterjs-editor-core';
 import { ContentModelBlock } from '../../publicTypes/block/ContentModelBlock';
 import { ContentModelBlockGroup } from '../../publicTypes/group/ContentModelBlockGroup';
 import { ContentModelDecorator } from '../../publicTypes/decorator/ContentModelDecorator';
@@ -22,6 +21,7 @@ import {
     Browser,
     wrap,
     safeInstanceOf,
+    ColorManager,
 } from 'roosterjs-editor-dom';
 import {
     ChangeSource,

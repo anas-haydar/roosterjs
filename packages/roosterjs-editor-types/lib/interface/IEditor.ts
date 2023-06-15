@@ -591,6 +591,7 @@ export default interface IEditor {
     isDarkMode(): boolean;
 
     /**
+     * @deprecated
      * Transform the given node and all its child nodes to dark mode color if editor is in dark mode
      * @param node The node to transform
      */
