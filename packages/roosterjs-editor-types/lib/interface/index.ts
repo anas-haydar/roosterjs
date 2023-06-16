@@ -51,7 +51,13 @@ export { default as SanitizeHtmlOptions } from './SanitizeHtmlOptions';
 export { default as TargetWindowBase } from './TargetWindowBase';
 export { default as TargetWindow } from './TargetWindow';
 export { default as IEditor } from './IEditor';
-export { default as DarkColorHandler, ColorKeyAndValue } from './DarkColorHandler';
+export {
+    default as DarkColorHandler,
+    ColorKeyAndValue,
+    DeprecatedDarkColorHandler,
+    IColorManager,
+    IDarkColorManager,
+} from './DarkColorHandler';
 export {
     ContentEditFeature,
     GenericContentEditFeature,

@@ -1,6 +1,12 @@
 import changeElementTag from '../utils/changeElementTag';
 import setColor from '../utils/setColor';
-import { DarkColorHandler, TableBorderFormat, TableFormat, VCell } from 'roosterjs-editor-types';
+import {
+    DarkColorHandler,
+    IColorManager,
+    TableBorderFormat,
+    TableFormat,
+    VCell,
+} from 'roosterjs-editor-types';
 import { getTableCellMetadata } from './tableCellInfo';
 const TRANSPARENT = 'transparent';
 const TABLE_CELL_TAG_NAME = 'TD';
@@ -24,7 +30,7 @@ export default function applyTableFormat(
     table.style.borderCollapse = 'collapse';
     setBordersType(cells, format);
     setCellColor(cells, format, darkColorHandler);
-    setFirstColumnFormat(cells, format);
+    setFirstColumnFormat(cells, format, darkColorHandler);
     setHeaderRowFormat(cells, format, darkColorHandler);
 }
 
@@ -49,7 +55,7 @@ function hasCellShade(cell: VCell) {
 function setCellColor(
     cells: VCell[][],
     format: TableFormat,
-    darkColorHandler?: DarkColorHandler | null
+    darkColorHandler?: IColorManager | null
 ) {
     const color = (index: number) => (index % 2 === 0 ? format.bgColorEven : format.bgColorOdd);
     const { hasBandedRows, hasBandedColumns, bgColorOdd, bgColorEven } = format;
@@ -273,7 +279,11 @@ function setBordersType(cells: VCell[][], format: TableFormat) {
  * @param format
  * @returns
  */
-function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
+function setFirstColumnFormat(
+    cells: VCell[][],
+    format: Partial<TableFormat>,
+    darkColorHandler?: DarkColorHandler | null
+) {
     if (!format.hasFirstColumn) {
         cells.forEach(row => {
             row.forEach((cell, cellIndex) => {
@@ -298,7 +308,8 @@ function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
                         TRANSPARENT,
                         true /** isBackgroundColor*/,
                         undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
+                        true /** shouldAdaptFontColor */,
+                        darkColorHandler
                     );
                 }
                 if (rowIndex !== cells.length - 1 && rowIndex !== 0) {

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import BuildInPluginState from './BuildInPluginState';
 import SidePane from './sidePane/SidePane';
 import SnapshotPlugin from './sidePane/snapshot/SnapshotPlugin';
-import { EditorOptions, EditorPlugin, IEditor } from 'roosterjs-editor-types';
+import { EditorOptions, EditorPlugin, IEditor, ModeIndependentColor } from 'roosterjs-editor-types';
 import { getDarkColor } from 'roosterjs-color-utils';
 import { PartialTheme, ThemeProvider } from '@fluentui/react/lib/Theme';
 import { registerWindowForCss, unregisterWindowForCss } from '../utils/cssMonitor';
@@ -36,6 +36,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     private mouseX: number;
     private static instance: MainPaneBase;
     private popoutRoot: HTMLElement;
+    private knownColors: Record<string, ModeIndependentColor> = {};
 
     protected sidePane = React.createRef<SidePane>();
     protected updateContentPlugin: UpdateContentPlugin;
@@ -185,6 +186,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
                             defaultFormat={this.state.initState.defaultFormat}
                             inDarkMode={this.state.isDarkMode}
                             getDarkColor={getDarkColor}
+                            knownColors={this.knownColors}
                             experimentalFeatures={this.state.initState.experimentalFeatures}
                             undoMetadataSnapshotService={this.snapshotPlugin.getSnapshotService()}
                             trustedHTMLHandler={trustedHTMLHandler}

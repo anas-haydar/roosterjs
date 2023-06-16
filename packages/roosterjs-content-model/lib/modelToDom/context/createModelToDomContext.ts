@@ -1,3 +1,4 @@
+import { ColorManager } from 'roosterjs-editor-dom';
 import { defaultContentModelHandlers } from './defaultContentModelHandlers';
 import { defaultImplicitFormatMap } from '../../formatHandlers/utils/defaultStyles';
 import { EditorContext } from '../../publicTypes/context/EditorContext';
@@ -21,7 +22,7 @@ export function createModelToDomContext(
 
     return {
         ...(editorContext || {
-            isDarkMode: false,
+            darkColorHandler: new ColorManager(),
         }),
         regularSelection: {
             current: {

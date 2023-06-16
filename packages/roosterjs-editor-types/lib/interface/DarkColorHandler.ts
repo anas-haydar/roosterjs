@@ -23,7 +23,7 @@ export interface ColorKeyAndValue {
 /**
  * A handler object for dark color, used for variable-based dark color solution
  */
-export default interface DarkColorHandler {
+export interface DeprecatedDarkColorHandler {
     /**
      * Given a light mode color value and an optional dark mode color value, register this color
      * so that editor can handle it, then return the CSS color value for current color mode.
@@ -58,3 +58,26 @@ export default interface DarkColorHandler {
      */
     findLightColorFromDarkColor(darkColor: string): string | null;
 }
+
+export interface IColorManager {
+    getColor(element: HTMLElement, isBackground: boolean): string;
+    setColor(
+        element: HTMLElement,
+        isBackground: boolean,
+        color: string | ModeIndependentColor
+    ): void;
+}
+
+export interface IDarkColorManager extends IColorManager {
+    isDarkMode: boolean;
+
+    /**
+     * Reset known color record, clean up registered color variables.
+     */
+    reset(): void;
+
+    formatColor(root: Node, includeSelf: boolean): void;
+    unformatColor(root: Node, includeSelf: boolean): void;
+}
+
+export default interface DarkColorHandler extends DeprecatedDarkColorHandler, IDarkColorManager {}

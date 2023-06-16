@@ -1,5 +1,4 @@
-import setColor from './setColor';
-import { DarkColorHandler, DefaultFormat } from 'roosterjs-editor-types';
+import { DefaultFormat, IColorManager } from 'roosterjs-editor-types';
 
 /**
  * Apply format to an HTML element
@@ -12,21 +11,11 @@ export default function applyFormat(
     element: HTMLElement,
     format: DefaultFormat,
     isDarkMode?: boolean,
-    darkColorHandler?: DarkColorHandler | null
+    darkColorHandler?: IColorManager | null
 ) {
     if (format) {
-        let elementStyle = element.style;
-        let {
-            fontFamily,
-            fontSize,
-            textColor,
-            textColors,
-            backgroundColor,
-            backgroundColors,
-            bold,
-            italic,
-            underline,
-        } = format;
+        const elementStyle = element.style;
+        const { fontFamily, fontSize, bold, italic, underline } = format;
 
         if (fontFamily) {
             elementStyle.fontFamily = fontFamily;
@@ -35,44 +24,17 @@ export default function applyFormat(
             elementStyle.fontSize = fontSize;
         }
 
-        if (textColors) {
-            setColor(
-                element,
-                textColors,
-                false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-        } else if (textColor) {
-            setColor(
-                element,
-                textColor,
-                false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-        }
+        if (darkColorHandler) {
+            const textColor = format.textColors || format.textColor;
+            const backColor = format.backgroundColors || format.backgroundColor;
 
-        if (backgroundColors) {
-            setColor(
-                element,
-                backgroundColors,
-                true /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-        } else if (backgroundColor) {
-            setColor(
-                element,
-                backgroundColor,
-                true /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
+            if (textColor) {
+                darkColorHandler.setColor(element, false /*isBackground*/, textColor);
+            }
+
+            if (backColor) {
+                darkColorHandler.setColor(element, true /*isBackground*/, backColor);
+            }
         }
 
         if (bold) {

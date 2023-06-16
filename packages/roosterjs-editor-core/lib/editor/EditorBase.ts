@@ -3,7 +3,6 @@ import {
     BlockElement,
     ChangeSource,
     ClipboardData,
-    ColorTransformDirection,
     ContentChangedData,
     ContentPosition,
     CoreCreator,
@@ -174,13 +173,9 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         const core = this.getCore();
         // Only replace the node when it falls within editor
         if (this.contains(existingNode) && toNode) {
-            core.api.transformColor(
-                core,
-                transformColorForDarkMode ? toNode : null,
-                true /*includeSelf*/,
-                () => existingNode.parentNode?.replaceChild(toNode, existingNode),
-                ColorTransformDirection.LightToDark
-            );
+            if (transformColorForDarkMode) {
+                core.darkColorHandler.formatColor(toNode, true /*includeSelf*/);
+            }
 
             return true;
         }
@@ -869,19 +864,6 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
         if (isDarkMode == !!nextDarkMode) {
             return;
         }
-        const core = this.getCore();
-
-        core.api.transformColor(
-            core,
-            core.contentDiv,
-            false /*includeSelf*/,
-            null /*callback*/,
-            nextDarkMode
-                ? ColorTransformDirection.LightToDark
-                : ColorTransformDirection.DarkToLight,
-            true /*forceTransform*/,
-            isDarkMode
-        );
 
         this.triggerContentChangedEvent(
             nextDarkMode ? ChangeSource.SwitchToDarkMode : ChangeSource.SwitchToLightMode
@@ -897,18 +879,13 @@ export class EditorBase<TEditorCore extends EditorCore, TEditorOptions extends E
     }
 
     /**
+     * @deprecated
      * Transform the given node and all its child nodes to dark mode color if editor is in dark mode
      * @param node The node to transform
      */
     public transformToDarkColor(node: Node) {
         const core = this.getCore();
-        core.api.transformColor(
-            core,
-            node,
-            true /*includeSelf*/,
-            null /*callback*/,
-            ColorTransformDirection.LightToDark
-        );
+        core.darkColorHandler.formatColor(node, true /*includeSelf*/);
     }
 
     /**

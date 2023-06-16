@@ -1,10 +1,4 @@
-import {
-    ColorTransformDirection,
-    EditorCore,
-    GetContent,
-    GetContentMode,
-    PluginEventType,
-} from 'roosterjs-editor-types';
+import { EditorCore, GetContent, GetContentMode, PluginEventType } from 'roosterjs-editor-types';
 import {
     createRange,
     getHtmlWithSelectionPath,
@@ -51,15 +45,7 @@ export const getContent: GetContent = (
             : null;
         const range = path && createRange(clonedRoot, path.start, path.end);
 
-        core.api.transformColor(
-            core,
-            clonedRoot,
-            false /*includeSelf*/,
-            null /*callback*/,
-            ColorTransformDirection.DarkToLight,
-            true /*forceTransform*/,
-            core.lifecycle.isDarkMode
-        );
+        core.darkColorHandler.unformatColor(clonedRoot, false /*includeSelf*/);
 
         if (triggerExtractContentEvent) {
             core.api.triggerEvent(

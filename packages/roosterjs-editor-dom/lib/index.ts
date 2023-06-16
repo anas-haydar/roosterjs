@@ -63,7 +63,7 @@ export { default as createElement, KnownCreateElementData } from './utils/create
 export { default as moveChildNodes } from './utils/moveChildNodes';
 export { default as getIntersectedRect } from './utils/getIntersectedRect';
 export { default as isNodeAfter } from './utils/isNodeAfter';
-export { default as parseColor } from './utils/parseColor';
+export { default as parseColor, calculateLightness } from './utils/parseColor';
 
 export { default as VTable } from './table/VTable';
 export { default as isWholeTableSelected } from './table/isWholeTableSelected';
@@ -134,6 +134,7 @@ export { default as setStyles } from './style/setStyles';
 export { default as removeImportantStyleRule } from './style/removeImportantStyleRule';
 export { default as setGlobalCssStyles } from './style/setGlobalCssStyles';
 export { default as removeGlobalCssStyle } from './style/removeGlobalCssStyle';
+export { default as ColorManager } from './style/ColorManager';
 
 export { default as adjustInsertPosition } from './edit/adjustInsertPosition';
 export { default as deleteSelectedContent } from './edit/deleteSelectedContent';
