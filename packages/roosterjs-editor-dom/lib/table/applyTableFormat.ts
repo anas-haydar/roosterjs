@@ -2,6 +2,7 @@ import changeElementTag from '../utils/changeElementTag';
 import setColor from '../utils/setColor';
 import { DarkColorHandler, TableBorderFormat, TableFormat, VCell } from 'roosterjs-editor-types';
 import { getTableCellMetadata } from './tableCellInfo';
+
 const TRANSPARENT = 'transparent';
 const TABLE_CELL_TAG_NAME = 'TD';
 const TABLE_HEADER_TAG_NAME = 'TH';
@@ -24,7 +25,7 @@ export default function applyTableFormat(
     table.style.borderCollapse = 'collapse';
     setBordersType(cells, format);
     setCellColor(cells, format, darkColorHandler);
-    setFirstColumnFormat(cells, format);
+    setFirstColumnFormat(cells, format, darkColorHandler);
     setHeaderRowFormat(cells, format, darkColorHandler);
 }
 
@@ -57,35 +58,14 @@ function setCellColor(
     cells.forEach((row, index) => {
         row.forEach(cell => {
             if (cell.td && !hasCellShade(cell)) {
-                if (hasBandedRows) {
-                    const backgroundColor = color(index);
-                    setColor(
-                        cell.td,
-                        backgroundColor || TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */,
-                        darkColorHandler
-                    );
-                } else if (shouldColorWholeTable) {
-                    setColor(
-                        cell.td,
-                        format.bgColorOdd || TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */,
-                        darkColorHandler
-                    );
-                } else {
-                    setColor(
-                        cell.td,
-                        TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */,
-                        darkColorHandler
-                    );
-                }
+                const bgColor =
+                    (hasBandedRows
+                        ? color(index)
+                        : shouldColorWholeTable
+                        ? format.bgColorOdd
+                        : null) || TRANSPARENT;
+
+                internalSetColor(cell.td, bgColor, darkColorHandler);
             }
         });
     });
@@ -93,15 +73,9 @@ function setCellColor(
         cells.forEach(row => {
             row.forEach((cell, index) => {
                 const backgroundColor = color(index);
+
                 if (cell.td && backgroundColor && !hasCellShade(cell)) {
-                    setColor(
-                        cell.td,
-                        backgroundColor,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */,
-                        darkColorHandler
-                    );
+                    internalSetColor(cell.td, backgroundColor, darkColorHandler);
                 }
             });
         });
@@ -273,7 +247,11 @@ function setBordersType(cells: VCell[][], format: TableFormat) {
  * @param format
  * @returns
  */
-function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
+function setFirstColumnFormat(
+    cells: VCell[][],
+    format: Partial<TableFormat>,
+    darkColorHandler: DarkColorHandler | null
+) {
     if (!format.hasFirstColumn) {
         cells.forEach(row => {
             row.forEach((cell, cellIndex) => {
@@ -293,13 +271,8 @@ function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
             if (cell.td && cellIndex === 0) {
                 if (rowIndex !== 0 && !hasCellShade(cell)) {
                     cell.td.style.borderTopColor = TRANSPARENT;
-                    setColor(
-                        cell.td,
-                        TRANSPARENT,
-                        true /** isBackgroundColor*/,
-                        undefined /** isDarkMode **/,
-                        true /** shouldAdaptFontColor */
-                    );
+
+                    internalSetColor(cell.td, TRANSPARENT, darkColorHandler);
                 }
                 if (rowIndex !== cells.length - 1 && rowIndex !== 0) {
                     cell.td.style.borderBottomColor = TRANSPARENT;
@@ -320,7 +293,7 @@ function setFirstColumnFormat(cells: VCell[][], format: Partial<TableFormat>) {
 function setHeaderRowFormat(
     cells: VCell[][],
     format: TableFormat,
-    darkColorHandler?: DarkColorHandler | null
+    darkColorHandler: DarkColorHandler | null
 ) {
     if (!format.hasHeaderRow) {
         cells[0]?.forEach(cell => {
@@ -334,14 +307,7 @@ function setHeaderRowFormat(
     cells[0]?.forEach(cell => {
         if (cell.td && format.headerRowColor) {
             if (!hasCellShade(cell)) {
-                setColor(
-                    cell.td,
-                    format.headerRowColor,
-                    true /** isBackgroundColor*/,
-                    undefined /** isDarkMode **/,
-                    true /** shouldAdaptFontColor */,
-                    darkColorHandler
-                );
+                internalSetColor(cell.td, format.headerRowColor, darkColorHandler);
             }
             cell.td.style.borderRightColor = format.headerRowColor;
             cell.td.style.borderLeftColor = format.headerRowColor;
@@ -355,4 +321,19 @@ function setHeaderRowFormat(
 function getBorderStyle(style?: string | null) {
     const color = style ? style : 'transparent';
     return 'solid 1px ' + color;
+}
+
+function internalSetColor(
+    td: HTMLElement,
+    color: string,
+    darkColorHandler?: DarkColorHandler | null
+) {
+    setColor(
+        td,
+        color,
+        true /*isBackground*/,
+        false /*isDarkMode*/,
+        true /*adjustTextColor*/,
+        darkColorHandler
+    );
 }

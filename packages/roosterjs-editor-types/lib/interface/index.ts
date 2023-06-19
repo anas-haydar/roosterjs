@@ -94,6 +94,7 @@ export {
     SelectImage,
 } from './EditorCore';
 export { default as EditorOptions } from './EditorOptions';
+export { default as DarkColorManagerOptions, GetDarkColor } from './DarkColorManagerOptions';
 export {
     default as ContentEditFeatureSettings,
     AutoLinkFeatureSettings,

@@ -15,18 +15,8 @@ export default function applyFormat(
     darkColorHandler?: DarkColorHandler | null
 ) {
     if (format) {
-        let elementStyle = element.style;
-        let {
-            fontFamily,
-            fontSize,
-            textColor,
-            textColors,
-            backgroundColor,
-            backgroundColors,
-            bold,
-            italic,
-            underline,
-        } = format;
+        const elementStyle = element.style;
+        const { fontFamily, fontSize, bold, italic, underline } = format;
 
         if (fontFamily) {
             elementStyle.fontFamily = fontFamily;
@@ -35,42 +25,27 @@ export default function applyFormat(
             elementStyle.fontSize = fontSize;
         }
 
-        if (textColors) {
-            setColor(
-                element,
-                textColors,
-                false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-        } else if (textColor) {
+        const textColor = format.textColors || format.textColor;
+        const backColor = format.backgroundColors || format.backgroundColor;
+
+        if (textColor) {
             setColor(
                 element,
                 textColor,
                 false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
+                false /*isDarkMode*/,
+                false /*adjustTextColor*/,
                 darkColorHandler
             );
         }
 
-        if (backgroundColors) {
+        if (backColor) {
             setColor(
                 element,
-                backgroundColors,
+                backColor,
                 true /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-        } else if (backgroundColor) {
-            setColor(
-                element,
-                backgroundColor,
-                true /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
+                false /*isDarkMode*/,
+                false /*adjustTextColor*/,
                 darkColorHandler
             );
         }

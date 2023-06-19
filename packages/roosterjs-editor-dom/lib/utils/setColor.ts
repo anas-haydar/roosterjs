@@ -1,15 +1,18 @@
-import parseColor from './parseColor';
+import parseColor from '../utils/parseColor';
 import { DarkColorHandler, ModeIndependentColor } from 'roosterjs-editor-types';
 
+type ColorAttrType = 'css' | 'html';
+const TextColorAttributeName: Record<ColorAttrType, string> = {
+    css: 'color',
+    html: 'color',
+};
+const BackColorAttributeName: Record<ColorAttrType, string> = {
+    css: 'background-color',
+    html: 'bgcolor',
+};
 const WHITE = '#ffffff';
-const GRAY = '#333333';
 const BLACK = '#000000';
 const TRANSPARENT = 'transparent';
-const enum ColorTones {
-    BRIGHT,
-    DARK,
-    NONE,
-}
 
 //Using the HSL (hue, saturation and lightness) representation for RGB color values, if the value of the lightness is less than 20, the color is dark
 const DARK_COLORS_LIGHTNESS = 20;
@@ -20,119 +23,114 @@ const BRIGHT_COLORS_LIGHTNESS = 80;
  * Set text color or background color to the given element
  * @param element The element to set color to
  * @param color The color to set, it can be a string of color name/value or a ModeIndependentColor object
- * @param isBackgroundColor Whether set background color or text color
+ * @param isBackground Whether set background color or text color
  * @param isDarkMode Whether current mode is dark mode. @default false
- * @param shouldAdaptTheFontColor Whether the font color needs to be adapted to be visible in a dark or bright background color. @default false
+ * @param adjustTextColor Whether the font color needs to be adapted to be visible in a dark or bright background color. @default false
  * @param darkColorHandler A dark color handler object. This is now required.
  * We keep it optional only for backward compatibility. If it is not passed, color will not be set.
  */
 export default function setColor(
     element: HTMLElement,
     color: string | ModeIndependentColor,
-    isBackgroundColor: boolean,
+    isBackground: boolean,
     isDarkMode?: boolean,
-    shouldAdaptTheFontColor?: boolean,
+    adjustTextColor?: boolean,
     darkColorHandler?: DarkColorHandler | null
 ) {
-    const colorString = typeof color === 'string' ? color.trim() : '';
-    const modeIndependentColor = typeof color === 'string' ? null : color;
-    const cssName = isBackgroundColor ? 'background-color' : 'color';
+    color = typeof color == 'string' ? color : color.lightModeColor;
 
-    if (colorString || modeIndependentColor) {
-        if (darkColorHandler) {
-            const colorValue = darkColorHandler.registerColor(
-                modeIndependentColor?.lightModeColor || colorString,
-                !!isDarkMode,
-                modeIndependentColor?.darkModeColor
-            );
+    internalSetColor(element, isBackground, color, darkColorHandler);
 
-            element.style.setProperty(cssName, colorValue);
-        }
+    if (isBackground && adjustTextColor && color != TRANSPARENT) {
+        const lightness = calculateLightness(color);
+        const textColor =
+            lightness < DARK_COLORS_LIGHTNESS
+                ? WHITE
+                : lightness > BRIGHT_COLORS_LIGHTNESS
+                ? BLACK
+                : null;
 
-        if (isBackgroundColor && shouldAdaptTheFontColor) {
-            adaptFontColorToBackgroundColor(
-                element,
-                modeIndependentColor?.lightModeColor || colorString,
-                isDarkMode,
-                darkColorHandler
-            );
+        if (textColor) {
+            internalSetColor(element, false /*isBackground*/, textColor, darkColorHandler);
         }
     }
 }
 
-/**
- * Change the font color to white or some other color, so the text can be visible with a darker background
- * @param element The element that contains text.
- * @param lightModeBackgroundColor Existing background color in light mode
- * @param isDarkMode Whether the content is in dark mode
- * @param darkColorHandler A dark color handler object.  This is now required.
- * We keep it optional only for backward compatibility. If it is not passed, color will not be set.
- */
-function adaptFontColorToBackgroundColor(
+export function getColor(
     element: HTMLElement,
-    lightModeBackgroundColor: string,
-    isDarkMode?: boolean,
+    isBackground: boolean,
     darkColorHandler?: DarkColorHandler | null
-) {
-    if (!lightModeBackgroundColor || lightModeBackgroundColor === TRANSPARENT) {
-        return;
-    }
+): string {
+    const color =
+        element.style.getPropertyValue(getColorAttrName(isBackground, 'css')) ??
+        element.getAttribute(getColorAttrName(isBackground, 'html')) ??
+        '';
 
-    const isADarkOrBrightOrNone = isADarkOrBrightColor(lightModeBackgroundColor!);
-
-    switch (isADarkOrBrightOrNone) {
-        case ColorTones.DARK:
-            const fontForDark: ModeIndependentColor = {
-                lightModeColor: WHITE,
-                darkModeColor: GRAY,
-            };
-            setColor(
-                element,
-                fontForDark,
-                false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-            break;
-        case ColorTones.BRIGHT:
-            const fontForLight: ModeIndependentColor = {
-                lightModeColor: BLACK,
-                darkModeColor: WHITE,
-            };
-            setColor(
-                element,
-                fontForLight,
-                false /*isBackground*/,
-                isDarkMode,
-                false /*shouldAdaptFontColor*/,
-                darkColorHandler
-            );
-            break;
-    }
+    return darkColorHandler ? darkColorHandler.parseColorValue(color).lightModeColor : color;
 }
 
-function isADarkOrBrightColor(color: string): ColorTones {
-    let lightness = calculateLightness(color);
-    if (lightness < DARK_COLORS_LIGHTNESS) {
-        return ColorTones.DARK;
-    } else if (lightness > BRIGHT_COLORS_LIGHTNESS) {
-        return ColorTones.BRIGHT;
+function internalSetColor(
+    element: HTMLElement,
+    isBackground: boolean,
+    color: string,
+    darkColorHandler?: DarkColorHandler | null
+) {
+    const propName = getColorAttrName(isBackground, 'css');
+
+    if (darkColorHandler) {
+        color = darkColorHandler.registerColor(
+            color,
+            false /*isDarkMode, not used now, so always pass true*/
+        );
     }
 
-    return ColorTones.NONE;
+    // if (darkColorHandler) {
+    //     let { lightModeColor, darkModeColor, key } = darkColorHandler.parseColorValue(color);
+
+    //     if (lightModeColor && darkColorHandler.getDarkColor) {
+    //         const colorKey =
+    //             key || `--${COLOR_VAR_PREFIX}_${lightModeColor.replace(/[^\d\w]/g, '_')}`;
+
+    //         if (!darkColorHandler.knownColors[colorKey]) {
+    //             const modeIndependentColor: ModeIndependentColor = {
+    //                 lightModeColor,
+    //                 darkModeColor: darkModeColor || darkColorHandler.getDarkColor(lightModeColor),
+    //             };
+
+    //             darkColorHandler.knownColors[colorKey] = modeIndependentColor;
+
+    //             if (darkColorHandler.isDarkMode) {
+    //                 darkColorHandler.setColorVariable(colorKey, modeIndependentColor.darkModeColor);
+    //             }
+    //         }
+
+    //         color = `var(${colorKey}, ${lightModeColor})`;
+    //     }
+    // }
+
+    if (color) {
+        element.style.setProperty(propName, color);
+    } else {
+        element.style.setProperty(propName, null);
+    }
+
+    element.removeAttribute(getColorAttrName(isBackground, 'html'));
+}
+
+function getColorAttrName(isBackground: boolean, type: ColorAttrType) {
+    return (isBackground ? BackColorAttributeName : TextColorAttributeName)[type];
 }
 
 /**
- * Calculate the lightness of HSL (hue, saturation and lightness) representation
- * @param color a RBG or RGBA COLOR
- * @returns
+ * Calculate lightness of a color
+ * @param color The color to calculate
+ * @returns Lightness value of the color, from 0 (darkest) to 255 (lightest)
  */
 function calculateLightness(color: string) {
     const colorValues = parseColor(color);
 
     // Use the values of r,g,b to calculate the lightness in the HSl representation
-    //First calculate the fraction of the light in each color, since in css the value of r,g,b is in the interval of [0,255], we have
+    // First calculate the fraction of the light in each color, since in css the value of r,g,b is in the interval of [0,255], we have
     if (colorValues) {
         const red = colorValues[0] / 255;
         const green = colorValues[1] / 255;

@@ -1,4 +1,4 @@
-import { contains, getComputedStyles } from 'roosterjs-editor-dom';
+import { contains, getColor, getComputedStyles } from 'roosterjs-editor-dom';
 import { EditorCore, GetStyleBasedFormatState, NodeType } from 'roosterjs-editor-types';
 
 /**
@@ -42,8 +42,8 @@ export const getStyleBasedFormatState: GetStyleBasedFormatState = (
         : [];
     const { contentDiv, darkColorHandler } = core;
 
-    let styleTextColor: string | undefined;
-    let styleBackColor: string | undefined;
+    let styleTextColor = override[2];
+    let styleBackColor = override[3];
 
     while (
         node &&
@@ -53,37 +53,24 @@ export const getStyleBasedFormatState: GetStyleBasedFormatState = (
         if (node.nodeType == NodeType.Element) {
             const element = node as HTMLElement;
 
-            styleTextColor = styleTextColor || element.style.getPropertyValue('color');
-            styleBackColor = styleBackColor || element.style.getPropertyValue('background-color');
+            styleTextColor =
+                styleTextColor || getColor(element, false /*isBackground*/, darkColorHandler);
+            styleBackColor =
+                styleBackColor || getColor(element, true /*isBackground*/, darkColorHandler);
         }
         node = node.parentNode;
     }
 
-    if (!core.lifecycle.isDarkMode && node == core.contentDiv) {
+    if (!core.darkColorHandler.isDarkMode && node == core.contentDiv) {
         styleTextColor = styleTextColor || styles[2];
         styleBackColor = styleBackColor || styles[3];
     }
 
-    const textColor = darkColorHandler.parseColorValue(override[2] || styleTextColor);
-    const backColor = darkColorHandler.parseColorValue(override[3] || styleBackColor);
-
     return {
         fontName: override[0] || styles[0],
         fontSize: override[1] || styles[1],
-        textColor: textColor.lightModeColor,
-        backgroundColor: backColor.lightModeColor,
-        textColors: textColor.darkModeColor
-            ? {
-                  lightModeColor: textColor.lightModeColor,
-                  darkModeColor: textColor.darkModeColor,
-              }
-            : undefined,
-        backgroundColors: backColor.darkModeColor
-            ? {
-                  lightModeColor: backColor.lightModeColor,
-                  darkModeColor: backColor.darkModeColor,
-              }
-            : undefined,
+        textColor: styleTextColor,
+        backgroundColor: styleBackColor,
         lineHeight: styles[4],
         marginTop: styles[5],
         marginBottom: styles[6],
