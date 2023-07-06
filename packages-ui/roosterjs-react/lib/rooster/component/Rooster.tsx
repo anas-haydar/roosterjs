@@ -19,6 +19,7 @@ export default function Rooster(props: RoosterProps) {
     const { focusOnInit, editorCreator, zoomScale, inDarkMode, plugins } = props;
 
     React.useEffect(() => {
+        exportEditorToWindow();
         if (plugins && editorDiv.current) {
             const uiUtilities = createUIUtilities(editorDiv.current, theme);
 
@@ -56,6 +57,12 @@ export default function Rooster(props: RoosterProps) {
             editor.current?.setZoomScale(zoomScale);
         }
     }, [zoomScale]);
+
+    function exportEditorToWindow() {
+        (window as any)['roosterEditor'] = () => {
+            return editor.current;
+        };
+    }
 
     const divProps = getNativeProps<React.HTMLAttributes<HTMLDivElement>>(props, divProperties);
     return <div ref={editorDiv} tabIndex={0} {...(divProps || {})}></div>;

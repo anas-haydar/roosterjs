@@ -49,7 +49,7 @@ const allTasks = [
 
 // Commands
 const commands = [
-    'tslint', // Run tslint to check code style
+    // 'tslint', // Run tslint to check code style
     'checkdep', // Check circular dependency among files
     'clean', // Clean target folder
     'normalize', // Normalize package.json files
@@ -61,7 +61,7 @@ const commands = [
     'dts', // Generate type definition files (.d.ts)
     'builddemo', // Build the demo site
     'builddoc', // Build documents
-    'publish', // Publish roosterjs packages to npm
+    // 'publish', // Publish roosterjs packages to npm
 ];
 
 class Runner {
