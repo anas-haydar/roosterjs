@@ -19,7 +19,6 @@ export default function Rooster(props: RoosterProps) {
     const { focusOnInit, editorCreator, zoomScale, inDarkMode, plugins } = props;
 
     React.useEffect(() => {
-        exportEditorToWindow();
         if (plugins && editorDiv.current) {
             const uiUtilities = createUIUtilities(editorDiv.current, theme);
 
@@ -30,6 +29,12 @@ export default function Rooster(props: RoosterProps) {
             });
         }
     }, [theme, editorCreator]);
+
+    React.useEffect(() => {
+        if (editorDiv.current) {
+            editorDiv.current.id = 'contentDiv';
+        }
+    }, []);
 
     React.useEffect(() => {
         if (editorDiv.current) {
@@ -57,6 +62,10 @@ export default function Rooster(props: RoosterProps) {
             editor.current?.setZoomScale(zoomScale);
         }
     }, [zoomScale]);
+
+    React.useEffect(() => {
+        exportEditorToWindow();
+    }, []);
 
     function exportEditorToWindow() {
         (window as any)['roosterEditor'] = () => {

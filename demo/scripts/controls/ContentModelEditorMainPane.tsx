@@ -19,10 +19,10 @@ import { ContentModelRibbonPlugin } from './ribbonButtons/contentModel/ContentMo
 import { EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
 import { PartialTheme } from '@fluentui/react/lib/Theme';
 import {
-    createRibbonPlugin,
     RibbonPlugin,
-    createPasteOptionPlugin,
     createEmojiPlugin,
+    createPasteOptionPlugin,
+    createRibbonPlugin,
 } from 'roosterjs-react';
 
 const styles = require('./ContentModelEditorMainPane.scss');
@@ -111,8 +111,8 @@ class ContentModelEditorMainPane extends MainPaneBase {
         this.formatPainterPlugin = new FormatPainterPlugin();
         this.sampleEntityPlugin = new SampleEntityPlugin();
         this.state = {
-            showSidePane: window.location.hash != '',
             popoutWindow: null,
+            showRibbon: true,
             initState: this.editorOptionPlugin.getBuildInPluginState(),
             scale: 1,
             isDarkMode: this.themeMatch?.matches || false,
@@ -169,7 +169,7 @@ class ContentModelEditorMainPane extends MainPaneBase {
             this.sampleEntityPlugin,
         ];
 
-        if (this.state.showSidePane || this.state.popoutWindow) {
+        if (this.state.popoutWindow) {
             arrayPush(plugins, this.getSidePanePlugins());
         }
 

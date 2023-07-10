@@ -10,15 +10,15 @@ import { registerWindowForCss, unregisterWindowForCss } from '../utils/cssMonito
 import { trustedHTMLHandler } from '../utils/trustedHTMLHandler';
 import { WindowProvider } from '@fluentui/react/lib/WindowProvider';
 import {
-    createUpdateContentPlugin,
     Rooster,
     UpdateContentPlugin,
     UpdateMode,
+    createUpdateContentPlugin,
 } from 'roosterjs-react';
 
 export interface MainPaneBaseState {
-    showSidePane: boolean;
     popoutWindow: Window;
+    showRibbon: boolean;
     initState: BuildInPluginState;
     scale: number;
     isDarkMode: boolean;
@@ -58,10 +58,6 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
 
     abstract renderRibbon(isPopout: boolean): JSX.Element;
 
-    abstract renderTitleBar(): JSX.Element;
-
-    abstract renderSidePane(fullWidth: boolean): JSX.Element;
-
     abstract getPlugins(): EditorPlugin[];
 
     abstract resetEditor(): void;
@@ -76,8 +72,9 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
                 applyTo="body"
                 theme={this.getTheme(this.state.isDarkMode)}
                 className={styles.mainPane}>
-                {this.renderTitleBar()}
-                {!this.state.popoutWindow && this.renderRibbon(false /*isPopout*/)}
+                {!this.state.popoutWindow &&
+                    this.state.showRibbon &&
+                    this.renderRibbon(false /*isPopout*/)}
                 <div className={styles.body + ' ' + (this.state.isDarkMode ? 'dark' : '')}>
                     {this.state.popoutWindow ? this.renderPopout() : this.renderMainPane()}
                 </div>
@@ -87,11 +84,22 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
 
     componentDidMount() {
         this.themeMatch?.addEventListener('change', this.onThemeChange);
+        this.exposeShowRibbonToConsole();
         this.resetEditor();
+    }
+
+    exposeShowRibbonToConsole() {
+        (window as any)['showRibbon'] = (value: boolean) => {
+            return this.showRibbon(value);
+        };
     }
 
     componentWillUnmount() {
         this.themeMatch?.removeEventListener('change', this.onThemeChange);
+    }
+
+    showRibbon(value: boolean): void {
+        this.setState({ showRibbon: value });
     }
 
     popout() {
@@ -145,22 +153,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     }
 
     private renderMainPane() {
-        const styles = this.getStyles();
-
-        return (
-            <>
-                {this.renderEditor()}
-                {this.state.showSidePane ? (
-                    <>
-                        <div className={styles.resizer} onMouseDown={this.onMouseDown} />
-                        {this.renderSidePane(false /*fullWidth*/)}
-                        {this.renderSidePaneButton()}
-                    </>
-                ) : (
-                    this.renderSidePaneButton()
-                )}
-            </>
-        );
+        return <>{this.renderEditor()}</>;
     }
 
     private renderEditor() {
@@ -199,31 +192,16 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
         );
     }
 
-    private renderSidePaneButton() {
-        const styles = this.getStyles();
-
-        return (
-            <button
-                className={`side-pane-toggle ${this.state.showSidePane ? 'open' : 'close'} ${
-                    styles.showSidePane
-                }`}
-                onClick={this.state.showSidePane ? this.onHideSidePane : this.onShowSidePane}>
-                <div>{this.state.showSidePane ? 'Hide side pane' : 'Show side pane'}</div>
-            </button>
-        );
-    }
-
     private renderPopout() {
         const styles = this.getStyles();
 
         return (
             <>
-                {this.renderSidePane(true /*fullWidth*/)}
                 {ReactDOM.createPortal(
                     <WindowProvider window={this.state.popoutWindow}>
                         <ThemeProvider applyTo="body" theme={this.getTheme(this.state.isDarkMode)}>
                             <div className={styles.mainPane}>
-                                {this.renderRibbon(true /*isPopout*/)}
+                                {this.state.showRibbon && this.renderRibbon(true /*isPopout*/)}
                                 <div className={styles.body}>{this.renderEditor()}</div>
                             </div>
                         </ThemeProvider>
@@ -233,13 +211,6 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
             </>
         );
     }
-
-    private onMouseDown = (e: React.MouseEvent<EventTarget>) => {
-        document.addEventListener('mousemove', this.onMouseMove, true);
-        document.addEventListener('mouseup', this.onMouseUp, true);
-        document.body.style.userSelect = 'none';
-        this.mouseX = e.pageX;
-    };
 
     private onMouseMove = (e: MouseEvent) => {
         this.sidePane.current.changeWidth(this.mouseX - e.pageX);
@@ -254,21 +225,6 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
 
     private onUpdate = (content: string) => {
         this.content = content;
-    };
-
-    private onShowSidePane = () => {
-        this.setState({
-            showSidePane: true,
-        });
-        this.resetEditor();
-    };
-
-    private onHideSidePane = () => {
-        this.setState({
-            showSidePane: false,
-        });
-        this.resetEditor();
-        window.location.hash = '';
     };
 
     private onThemeChange = () => {

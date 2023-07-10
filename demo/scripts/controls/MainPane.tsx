@@ -8,9 +8,7 @@ import FormatStatePlugin from './sidePane/formatState/FormatStatePlugin';
 import getToggleablePlugins from './getToggleablePlugins';
 import MainPaneBase from './MainPaneBase';
 import SampleEntityPlugin from './sampleEntity/SampleEntityPlugin';
-import SidePane from './sidePane/SidePane';
 import SnapshotPlugin from './sidePane/snapshot/SnapshotPlugin';
-import TitleBar from './titleBar/TitleBar';
 import { arrayPush } from 'roosterjs-editor-dom';
 import { darkMode, DarkModeButtonStringKey } from './ribbonButtons/darkMode';
 import { Editor } from 'roosterjs-editor-core';
@@ -20,15 +18,15 @@ import { PartialTheme } from '@fluentui/react/lib/Theme';
 import { popout, PopoutButtonStringKey } from './ribbonButtons/popout';
 import { zoom, ZoomButtonStringKey } from './ribbonButtons/zoom';
 import {
-    createRibbonPlugin,
-    RibbonPlugin,
-    createPasteOptionPlugin,
+    AllButtonKeys,
+    AllButtonStringKeys,
     createEmojiPlugin,
+    createPasteOptionPlugin,
+    createRibbonPlugin,
+    getButtons,
     Ribbon,
     RibbonButton,
-    AllButtonStringKeys,
-    getButtons,
-    AllButtonKeys,
+    RibbonPlugin,
 } from 'roosterjs-react';
 
 const styles = require('./MainPane.scss');
@@ -131,8 +129,8 @@ class MainPane extends MainPaneBase {
         this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
 
         this.state = {
-            showSidePane: window.location.hash != '',
             popoutWindow: null,
+            showRibbon: true,
             initState: this.editorOptionPlugin.getBuildInPluginState(),
             scale: 1,
             isDarkMode: this.themeMatch?.matches || false,
@@ -145,31 +143,12 @@ class MainPane extends MainPaneBase {
         return styles;
     }
 
-    renderTitleBar() {
-        return <TitleBar className={styles.noGrow} isContentModelPane={false} />;
-    }
-
     renderRibbon(isPopout: boolean) {
         return (
             <Ribbon
                 buttons={isPopout ? this.popoutWindowButtons : this.mainWindowButtons}
                 plugin={this.ribbonPlugin}
                 dir={this.state.isRtl ? 'rtl' : 'ltr'}
-            />
-        );
-    }
-
-    renderSidePane(fullWidth: boolean) {
-        const styles = this.getStyles();
-
-        return (
-            <SidePane
-                ref={this.sidePane}
-                plugins={this.getSidePanePlugins()}
-                isContentModelDemo={false}
-                className={`main-pane ${styles.sidePane} ${
-                    fullWidth ? styles.sidePaneFullWidth : ''
-                }`}
             />
         );
     }
@@ -187,7 +166,7 @@ class MainPane extends MainPaneBase {
             this.sampleEntityPlugin,
         ];
 
-        if (this.state.showSidePane || this.state.popoutWindow) {
+        if (this.state.popoutWindow) {
             arrayPush(plugins, this.getSidePanePlugins());
         }
 
@@ -219,6 +198,6 @@ class MainPane extends MainPaneBase {
     }
 }
 
-export function mount(parent: HTMLElement) {
-    ReactDOM.render(<MainPane />, parent);
+export function mount(parent: HTMLElement, callback?: Function) {
+    ReactDOM.render(<MainPane />, parent, callback ? callback() : null);
 }
