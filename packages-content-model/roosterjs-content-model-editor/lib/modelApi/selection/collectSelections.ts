@@ -1,3 +1,5 @@
+import { createInsertPoint } from '../edit/utils/createInsertPoint';
+import { InsertPoint } from 'roosterjs-content-model/lib';
 import { isBlockGroupOfType } from '../common/isBlockGroupOfType';
 import { iterateSelections, IterateSelectionsOption } from './iterateSelections';
 import { TableSelectionContext } from '../../publicTypes/selection/TableSelectionContext';
@@ -153,6 +155,27 @@ export function getFirstSelectedListItem(
     });
 
     return listItem;
+}
+
+/**
+ * @internal
+ */
+export function getInsertPoint(model: ContentModelDocument): InsertPoint | null {
+    const selections = collectSelections(model, { includeListFormatHolder: 'never' });
+
+    if (selections.length == 1) {
+        const { block, segments, path, tableContext } = selections[0];
+
+        if (
+            block?.blockType == 'Paragraph' &&
+            segments?.length == 1 &&
+            segments[0].segmentType == 'SelectionMarker'
+        ) {
+            return createInsertPoint(segments[0], block, path, tableContext);
+        }
+    }
+
+    return null;
 }
 
 interface SelectionInfo {

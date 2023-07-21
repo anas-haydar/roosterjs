@@ -1,12 +1,12 @@
 import { ChangeSource } from 'roosterjs-editor-types';
+import { getPendingFormat, setPendingFormat } from '../../modelApi/format/pendingFormat';
+import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
+import { reducedModelChildProcessor } from '../../domToModel/processors/reducedModelChildProcessor';
 import {
     ContentModelDocument,
     DomToModelOption,
     OnNodeCreated,
 } from 'roosterjs-content-model-types';
-import { getPendingFormat, setPendingFormat } from '../../modelApi/format/pendingFormat';
-import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
-import { reducedModelChildProcessor } from '../../domToModel/processors/reducedModelChildProcessor';
 
 /**
  * @internal
@@ -107,6 +107,8 @@ export function formatWithContentModel(
             );
         }
 
-        editor.cacheContentModel?.(model);
+        if (!useReducedModel) {
+            editor.cacheContentModel?.(model);
+        }
     }
 }

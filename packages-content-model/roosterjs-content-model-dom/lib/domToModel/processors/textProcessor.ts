@@ -23,7 +23,7 @@ export const textProcessor: ElementProcessor<Text> = (
     let [txtStartOffset, txtEndOffset] = getRegularSelectionOffsets(context, textNode);
 
     if (txtStartOffset >= 0) {
-        addTextSegment(group, txt.substring(0, txtStartOffset), context);
+        addTextSegment(group, txt.substring(0, txtStartOffset), context, textNode);
         context.isInSelection = true;
 
         addSelectionMarker(group, context);
@@ -33,7 +33,7 @@ export const textProcessor: ElementProcessor<Text> = (
     }
 
     if (txtEndOffset >= 0) {
-        addTextSegment(group, txt.substring(0, txtEndOffset), context);
+        addTextSegment(group, txt.substring(0, txtEndOffset), context, textNode);
 
         if (context.rangeEx && !context.rangeEx.areAllCollapsed) {
             addSelectionMarker(group, context);
@@ -43,13 +43,18 @@ export const textProcessor: ElementProcessor<Text> = (
         txt = txt.substring(txtEndOffset);
     }
 
-    addTextSegment(group, txt, context);
+    addTextSegment(group, txt, context, textNode);
 };
 
 // When we see these values of white-space style, need to preserve spaces and line-breaks and let browser handle it for us.
 const WhiteSpaceValuesNeedToHandle = ['pre', 'pre-wrap', 'pre-line', 'break-spaces'];
 
-function addTextSegment(group: ContentModelBlockGroup, text: string, context: DomToModelContext) {
+function addTextSegment(
+    group: ContentModelBlockGroup,
+    text: string,
+    context: DomToModelContext,
+    textNode: Text
+) {
     if (text) {
         const lastBlock = group.blocks[group.blocks.length - 1];
         const paragraph = lastBlock?.blockType == 'Paragraph' ? lastBlock : null;
@@ -57,6 +62,7 @@ function addTextSegment(group: ContentModelBlockGroup, text: string, context: Do
 
         if (
             lastSegment?.segmentType == 'Text' &&
+            lastSegment.textNode == textNode &&
             !!lastSegment.isSelected == !!context.isInSelection &&
             areSameFormats(lastSegment.format, context.segmentFormat) &&
             areSameFormats(lastSegment.link || {}, context.link.format || {}) &&
@@ -72,6 +78,10 @@ function addTextSegment(group: ContentModelBlockGroup, text: string, context: Do
 
             if (context.isInSelection) {
                 textModel.isSelected = true;
+            }
+
+            if (context.allowCacheElement && textNode) {
+                textModel.textNode = textNode;
             }
 
             addDecorators(textModel, context);

@@ -1,10 +1,11 @@
+import { EditorOptions, IEditor } from 'roosterjs-editor-types';
+import { InsertPoint } from './selection/InsertPoint';
 import {
     ContentModelDocument,
     ContentModelSegmentFormat,
     DomToModelOption,
     ModelToDomOption,
 } from 'roosterjs-content-model-types';
-import { EditorOptions, IEditor } from 'roosterjs-editor-types';
 
 /**
  * An interface of editor with Content Model support.
@@ -31,6 +32,15 @@ export interface IContentModelEditor extends IEditor {
      * @param model
      */
     cacheContentModel(model: ContentModelDocument | null): void;
+
+    /**
+     * Get insert point of current content model. When it returns null, it could because
+     * 1. There is no cached Content Model, or
+     * 2. The cached Content Model does not have selection, or
+     * 3. The cached Content Model have expanded selection, or
+     * 4. The cached Content Model have other type of selection than "Normal", e.g. Table selection or image selection
+     */
+    getInsertPoint(): InsertPoint | null;
 
     /**
      * Get default format as ContentModelSegmentFormat.

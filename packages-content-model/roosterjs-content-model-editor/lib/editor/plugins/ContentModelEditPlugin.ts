@@ -1,5 +1,4 @@
 import handleKeyDownEvent from '../../publicApi/editing/handleKeyDownEvent';
-import { ContentModelSegmentFormat } from 'roosterjs-content-model-types';
 import { DeleteResult } from '../../modelApi/edit/utils/DeleteSelectionStep';
 import { deleteSelection } from '../../modelApi/edit/deleteSelection';
 import { formatWithContentModel } from '../../publicApi/utils/formatWithContentModel';
@@ -7,6 +6,11 @@ import { getOnDeleteEntityCallback } from '../utils/handleKeyboardEventCommon';
 import { getPendingFormat, setPendingFormat } from '../../modelApi/format/pendingFormat';
 import { IContentModelEditor } from '../../publicTypes/IContentModelEditor';
 import { isNodeOfType, normalizeContentModel } from 'roosterjs-content-model-dom';
+import {
+    ContentModelSegment,
+    ContentModelSegmentFormat,
+    ContentModelText,
+} from 'roosterjs-content-model-types';
 import {
     getObjectKeys,
     isBlockElement,
@@ -99,6 +103,10 @@ export default class ContentModelEditPlugin implements EditorPlugin {
                 case PluginEventType.SelectionChanged:
                     this.editor.cacheContentModel(null);
                     break;
+
+                case PluginEventType.Input:
+                    this.handleInputEvent(this.editor, event.rawEvent);
+                    break;
             }
         }
     }
@@ -136,14 +144,39 @@ export default class ContentModelEditPlugin implements EditorPlugin {
                     break;
 
                 default:
-                    if (
-                        (isCharacterValue(rawEvent) || rawEvent.key == ProcessKey) &&
-                        this.hasDefaultFormat
-                    ) {
-                        this.tryApplyDefaultFormat(editor);
+                    if (isCharacterValue(rawEvent) || rawEvent.key == ProcessKey) {
+                        if (this.hasDefaultFormat) {
+                            this.tryApplyDefaultFormat(editor);
+                        }
+
+                        // formatWithContentModel(editor, 'autoHyphen2', () => {
+                        //     const ip = editor.getInsertPoint();
+
+                        //     if (ip) {
+                        //         const { paragraph, marker } = ip;
+                        //         const index = paragraph.segments.indexOf(marker);
+                        //         const segmentBefore = paragraph.segments[index - 1];
+
+                        //         if (
+                        //             segmentBefore?.segmentType == 'Text' &&
+                        //             segmentBefore.text.endsWith('---')
+                        //         ) {
+                        //             segmentBefore.text =
+                        //                 segmentBefore.text.substring(
+                        //                     0,
+                        //                     segmentBefore.text.length - 3
+                        //                 ) + '===';
+
+                        //             return true;
+                        //         }
+                        //     }
+
+                        //     return false;
+                        // });
+                    } else {
+                        editor.cacheContentModel(null);
                     }
 
-                    editor.cacheContentModel(null);
                     break;
             }
         }
@@ -151,6 +184,51 @@ export default class ContentModelEditPlugin implements EditorPlugin {
         if (this.triggeredEntityEvents.length > 0) {
             this.triggeredEntityEvents = [];
         }
+    }
+
+    private handleInputEvent(editor: IContentModelEditor, rawEvent: InputEvent) {
+        if (rawEvent.data) {
+            const range = editor.getSelectionRange();
+            const textNode =
+                range?.collapsed && isNodeOfType(range.startContainer, NodeType.Text)
+                    ? range.startContainer
+                    : null;
+
+            if (range && textNode) {
+                const insertPoint = editor.getInsertPoint();
+
+                if (insertPoint) {
+                    const { marker, paragraph } = insertPoint;
+                    const index = paragraph.segments.indexOf(marker);
+
+                    if (index >= 0) {
+                        const segmentBefore = paragraph.segments[index - 1];
+                        const segmentAfter = paragraph.segments[index + 1];
+                        const offset = range.startOffset;
+                        const txt = textNode.nodeValue || '';
+
+                        if (
+                            (offset == 0 || isValidSegment(segmentBefore, textNode)) &&
+                            (offset == txt.length - 1 || isValidSegment(segmentAfter, textNode))
+                        ) {
+                            if (segmentBefore) {
+                                (<ContentModelText>segmentBefore).text = txt.substring(0, offset);
+                            }
+
+                            if (segmentAfter) {
+                                (<ContentModelText>segmentAfter).text = txt.substring(
+                                    range.startOffset
+                                );
+                            }
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        editor.cacheContentModel(null);
     }
 
     private tryApplyDefaultFormat(editor: IContentModelEditor) {
@@ -263,4 +341,8 @@ export default class ContentModelEditPlugin implements EditorPlugin {
                 range.startContainer.nextSibling)
         );
     }
+}
+
+function isValidSegment(segment: ContentModelSegment | null, textNode: Text) {
+    return segment?.segmentType == 'Text' && segment.textNode == textNode;
 }

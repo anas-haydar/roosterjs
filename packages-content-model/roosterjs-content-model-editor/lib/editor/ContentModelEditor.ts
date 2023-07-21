@@ -1,13 +1,15 @@
+import { ContentModelEditorCore } from '../publicTypes/ContentModelEditorCore';
+import { ContentModelEditorOptions, IContentModelEditor } from '../publicTypes/IContentModelEditor';
+import { createContentModelEditorCore } from './createContentModelEditorCore';
+import { EditorBase } from 'roosterjs-editor-core';
+import { getInsertPoint } from '../modelApi/selection/collectSelections';
+import { InsertPoint } from '../publicTypes/selection/InsertPoint';
 import {
     ContentModelDocument,
     ContentModelSegmentFormat,
     DomToModelOption,
     ModelToDomOption,
 } from 'roosterjs-content-model-types';
-import { ContentModelEditorCore } from '../publicTypes/ContentModelEditorCore';
-import { ContentModelEditorOptions, IContentModelEditor } from '../publicTypes/IContentModelEditor';
-import { createContentModelEditorCore } from './createContentModelEditorCore';
-import { EditorBase } from 'roosterjs-editor-core';
 
 /**
  * Editor for Content Model.
@@ -55,7 +57,31 @@ export default class ContentModelEditor
 
         if (core.reuseModel && !core.lifecycle.shadowEditFragment) {
             core.cachedModel = model || undefined;
+            core.cachedInsertPoint = undefined;
         }
+    }
+
+    /**
+     * Get insert point of current content model. When it returns null, it could because
+     * 1. There is no cached Content Model, or
+     * 2. The cached Content Model does not have selection, or
+     * 3. The cached Content Model have expanded selection, or
+     * 4. The cached Content Model have other type of selection than "Normal", e.g. Table selection or image selection
+     */
+    getInsertPoint(): InsertPoint | null {
+        const core = this.getCore();
+
+        if (core.cachedInsertPoint) {
+            return core.cachedInsertPoint;
+        }
+
+        const model = core.reuseModel && core.cachedModel;
+
+        if (model) {
+            core.cachedInsertPoint = getInsertPoint(model);
+        }
+
+        return core.cachedInsertPoint || null;
     }
 
     /**

@@ -1,4 +1,5 @@
 import { CoreApiMap, EditorCore } from 'roosterjs-editor-types';
+import { InsertPoint } from './selection/InsertPoint';
 import {
     ContentModelDocument,
     ContentModelSegmentFormat,
@@ -80,6 +81,16 @@ export interface ContentModelEditorCore extends EditorCore {
      * When reuse Content Model is allowed, we cache the Content Model object here after created
      */
     cachedModel?: ContentModelDocument;
+
+    /**
+     * When reuse Content Model is allowed, we cache the Insert Point of current cached content mode.
+     * It can have the following values:
+     *
+     * null: There is no insert point of current cached content model. It can because the selection is not collapsed, or a table/image selection, or no selection
+     * undefined: When there is cached content mode, current insert point is not evaluated yet. Need to go through the content model to get content model.
+     * other (a valid insert point): Cached insert point
+     */
+    cachedInsertPoint?: InsertPoint | null;
 
     /**
      * Default format used by Content Model. This is calculated from lifecycle.defaultFormat
