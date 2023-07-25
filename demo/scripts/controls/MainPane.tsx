@@ -15,7 +15,6 @@ import { Editor } from 'roosterjs-editor-core';
 import { EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
 import { ExportButtonStringKey, exportContent } from './ribbonButtons/export';
 import { PartialTheme } from '@fluentui/react/lib/Theme';
-import { popout, PopoutButtonStringKey } from './ribbonButtons/popout';
 import { zoom, ZoomButtonStringKey } from './ribbonButtons/zoom';
 import {
     AllButtonKeys,
@@ -34,8 +33,8 @@ type RibbonStringKeys =
     | AllButtonStringKeys
     | DarkModeButtonStringKey
     | ZoomButtonStringKey
-    | ExportButtonStringKey
-    | PopoutButtonStringKey;
+    | ExportButtonStringKey;
+// | PopoutButtonStringKey;
 
 const LightTheme: PartialTheme = {
     palette: {
@@ -119,13 +118,7 @@ class MainPane extends MainPaneBase {
         this.formatPainterPlugin = new FormatPainterPlugin();
         this.sampleEntityPlugin = new SampleEntityPlugin();
 
-        this.mainWindowButtons = getButtons([
-            ...AllButtonKeys,
-            darkMode,
-            zoom,
-            exportContent,
-            popout,
-        ]);
+        this.mainWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
         this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
 
         this.state = {
