@@ -7,7 +7,6 @@ import FormatPainterPlugin from './contentModel/plugins/FormatPainterPlugin';
 import FormatStatePlugin from './sidePane/formatState/FormatStatePlugin';
 import getToggleablePlugins from './getToggleablePlugins';
 import MainPaneBase from './MainPaneBase';
-import SampleEntityPlugin from './sampleEntity/SampleEntityPlugin';
 import SnapshotPlugin from './sidePane/snapshot/SnapshotPlugin';
 import { arrayPush } from 'roosterjs-editor-dom';
 import { darkMode, DarkModeButtonStringKey } from './ribbonButtons/darkMode';
@@ -100,7 +99,6 @@ class MainPane extends MainPaneBase {
     private emojiPlugin: EditorPlugin;
     private toggleablePlugins: EditorPlugin[] | null = null;
     private formatPainterPlugin: FormatPainterPlugin;
-    private sampleEntityPlugin: SampleEntityPlugin;
     private mainWindowButtons: RibbonButton<RibbonStringKeys>[];
     private popoutWindowButtons: RibbonButton<RibbonStringKeys>[];
 
@@ -116,7 +114,6 @@ class MainPane extends MainPaneBase {
         this.pasteOptionPlugin = createPasteOptionPlugin();
         this.emojiPlugin = createEmojiPlugin();
         this.formatPainterPlugin = new FormatPainterPlugin();
-        this.sampleEntityPlugin = new SampleEntityPlugin();
 
         this.mainWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
         this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
@@ -156,7 +153,8 @@ class MainPane extends MainPaneBase {
             this.pasteOptionPlugin,
             this.emojiPlugin,
             this.formatPainterPlugin,
-            this.sampleEntityPlugin,
+            // this.sampleEntityPlugin,
+            this.eventViewPlugin,
         ];
 
         if (this.state.popoutWindow) {
