@@ -27,7 +27,7 @@ export interface MainPaneBaseState {
 }
 
 const PopoutRoot = 'mainPane';
-const POPOUT_HTML = `<!doctype html><html><head><title>RoosterJs Demo Site</title></head><body><div id=${PopoutRoot}></div></body></html>`;
+const POPOUT_HTML = `<!doctype html><html><head><title>Editor</title></head><body><div id=${PopoutRoot}></div></body></html>`;
 const POPOUT_FEATURES = 'menubar=no,statusbar=no,width=1200,height=800';
 const POPOUT_URL = 'about:blank';
 const POPOUT_TARGET = '_blank';
@@ -69,7 +69,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
 
         return (
             <ThemeProvider
-                applyTo="body"
+                applyTo="none"
                 theme={this.getTheme(this.state.isDarkMode)}
                 className={styles.mainPane}>
                 {!this.state.popoutWindow &&
@@ -85,12 +85,21 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     componentDidMount() {
         this.themeMatch?.addEventListener('change', this.onThemeChange);
         this.exposeShowRibbonToConsole();
+        this.exposeToggleThemeToConsole();
         this.resetEditor();
     }
 
     exposeShowRibbonToConsole() {
         (window as any)['showRibbon'] = (value: boolean) => {
             return this.showRibbon(value);
+        };
+    }
+
+    exposeToggleThemeToConsole() {
+        (window as any)['setDarkTheme'] = (value: boolean) => {
+            return this.setState({
+                isDarkMode: value,
+            });
         };
     }
 

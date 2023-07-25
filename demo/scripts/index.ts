@@ -1,8 +1,8 @@
 import { mount as mountClassicalEditorMainPane } from './controls/MainPane';
 
-(window as any)['mountKqcRoosterEditor'] = (callback?: Function) => {
+(window as any)['mountKqcRoosterEditor'] = (elementId: string, callback?: Function) => {
     return mountClassicalEditorMainPane(
-        document.getElementById('mainPane'),
+        document.getElementById(elementId),
         callback ? callback() : null
     );
 };
