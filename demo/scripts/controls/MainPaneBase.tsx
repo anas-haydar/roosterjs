@@ -54,7 +54,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
         this.updateContentPlugin = createUpdateContentPlugin(UpdateMode.OnDispose, this.onUpdate);
     }
 
-    abstract getStyles(): Record<string, string>;
+    abstract getStyles(isDark: boolean): Record<string, string>;
 
     abstract renderRibbon(isPopout: boolean): JSX.Element;
 
@@ -65,7 +65,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     abstract getTheme(isDark: boolean): PartialTheme;
 
     render() {
-        const styles = this.getStyles();
+        const styles = this.getStyles(this.state.isDarkMode);
 
         return (
             <ThemeProvider
@@ -166,7 +166,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     }
 
     private renderEditor() {
-        const styles = this.getStyles();
+        const styles = this.getStyles(this.state.isDarkMode);
         const allPlugins = this.getPlugins();
         const editorStyles = {
             transform: `scale(${this.state.scale})`,
@@ -202,7 +202,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
     }
 
     private renderPopout() {
-        const styles = this.getStyles();
+        const styles = this.getStyles(this.state.isDarkMode);
 
         return (
             <>

@@ -27,7 +27,9 @@ import {
     RibbonPlugin,
 } from 'roosterjs-react';
 
-const styles = require('./MainPane.scss');
+const styles = (isDark: boolean): Record<string, string> => {
+    return !isDark ? require('./MainPane.scss') : require('./MainPane-dark.scss');
+};
 type RibbonStringKeys =
     | AllButtonStringKeys
     | DarkModeButtonStringKey
@@ -85,7 +87,7 @@ const DarkTheme: PartialTheme = {
         neutralPrimary: '#ffffff',
         neutralDark: '#f4f4f4',
         black: '#f8f8f8',
-        white: '#333333',
+        white: '#212529',
     },
 };
 
@@ -129,8 +131,8 @@ class MainPane extends MainPaneBase {
         };
     }
 
-    getStyles(): Record<string, string> {
-        return styles;
+    getStyles(isDark: boolean): Record<string, string> {
+        return styles(isDark);
     }
 
     renderRibbon(isPopout: boolean) {

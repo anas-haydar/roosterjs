@@ -8,7 +8,7 @@ $primaryColorDark: #0091a1;
 $primaryLighterDark: lighten($primaryColorDark, 5%);
 $primaryLighter2Dark: lighten($primaryColorDark, 50%);
 $primaryBorderDark: #007b8b;
-$primaryBackgroundColorDark: #333333;
+$primaryBackgroundColorDark: #212529;
 
 @media (prefers-color-scheme: dark) {
     button {
