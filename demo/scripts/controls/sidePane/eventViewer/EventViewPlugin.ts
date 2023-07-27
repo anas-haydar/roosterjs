@@ -7,7 +7,7 @@ export default class EventViewPlugin extends SidePanePluginImpl<
     EventViewPane,
     SidePaneElementProps
 > {
-    constructor() {
+    constructor(private paneId: string) {
         super(EventViewPane, 'event', 'Event Viewer');
     }
 
@@ -20,7 +20,7 @@ export default class EventViewPlugin extends SidePanePluginImpl<
     }
 
     triggerCustomEvent(e: PluginEvent) {
-        const customEvent = new CustomEvent('contentUpdated', { detail: e });
+        const customEvent = new CustomEvent(`contentUpdated-${this.paneId}`, { detail: e });
         window.dispatchEvent(customEvent);
     }
 

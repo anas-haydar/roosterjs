@@ -12,7 +12,6 @@ import { arrayPush } from 'roosterjs-editor-dom';
 import { darkMode, DarkModeButtonStringKey } from './ribbonButtons/darkMode';
 import { Editor } from 'roosterjs-editor-core';
 import { EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
-import { ExportButtonStringKey, exportContent } from './ribbonButtons/export';
 import { PartialTheme } from '@fluentui/react/lib/Theme';
 import { zoom, ZoomButtonStringKey } from './ribbonButtons/zoom';
 import {
@@ -30,11 +29,8 @@ import {
 const styles = (isDark: boolean): Record<string, string> => {
     return !isDark ? require('./MainPane.scss') : require('./MainPane-dark.scss');
 };
-type RibbonStringKeys =
-    | AllButtonStringKeys
-    | DarkModeButtonStringKey
-    | ZoomButtonStringKey
-    | ExportButtonStringKey;
+type RibbonStringKeys = AllButtonStringKeys | DarkModeButtonStringKey | ZoomButtonStringKey;
+// | ExportButtonStringKey;
 // | PopoutButtonStringKey;
 
 const LightTheme: PartialTheme = {
@@ -104,12 +100,12 @@ class MainPane extends MainPaneBase {
     private mainWindowButtons: RibbonButton<RibbonStringKeys>[];
     private popoutWindowButtons: RibbonButton<RibbonStringKeys>[];
 
-    constructor(props: {}) {
+    constructor(props: { paneId: string }) {
         super(props);
 
         this.formatStatePlugin = new FormatStatePlugin();
         this.editorOptionPlugin = new EditorOptionsPlugin();
-        this.eventViewPlugin = new EventViewPlugin();
+        this.eventViewPlugin = new EventViewPlugin(this.props.paneId);
         this.apiPlaygroundPlugin = new ApiPlaygroundPlugin();
         this.snapshotPlugin = new SnapshotPlugin();
         this.ribbonPlugin = createRibbonPlugin();
@@ -117,8 +113,8 @@ class MainPane extends MainPaneBase {
         this.emojiPlugin = createEmojiPlugin();
         this.formatPainterPlugin = new FormatPainterPlugin();
 
-        this.mainWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
-        this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom, exportContent]);
+        this.mainWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom]);
+        this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom]);
 
         this.state = {
             popoutWindow: null,
@@ -191,6 +187,6 @@ class MainPane extends MainPaneBase {
     }
 }
 
-export function mount(parent: HTMLElement, callback?: Function) {
-    ReactDOM.render(<MainPane />, parent, callback ? callback() : null);
+export function mount(paneId: string, parent: HTMLElement, callback?: Function) {
+    ReactDOM.render(<MainPane paneId={paneId} />, parent, callback ? callback() : null);
 }

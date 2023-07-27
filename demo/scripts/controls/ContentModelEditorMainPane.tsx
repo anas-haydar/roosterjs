@@ -95,12 +95,12 @@ class ContentModelEditorMainPane extends MainPaneBase {
     private formatPainterPlugin: FormatPainterPlugin;
     private sampleEntityPlugin: SampleEntityPlugin;
 
-    constructor(props: {}) {
+    constructor(props: { paneId: string }) {
         super(props);
 
         this.formatStatePlugin = new ContentModelFormatStatePlugin();
         this.editorOptionPlugin = new ContentModelEditorOptionsPlugin();
-        this.eventViewPlugin = new EventViewPlugin();
+        this.eventViewPlugin = new EventViewPlugin('');
         this.apiPlaygroundPlugin = new ApiPlaygroundPlugin();
         this.snapshotPlugin = new SnapshotPlugin();
         this.ContentModelPanePlugin = new ContentModelPanePlugin();
@@ -203,5 +203,5 @@ class ContentModelEditorMainPane extends MainPaneBase {
 }
 
 export function mount(parent: HTMLElement) {
-    ReactDOM.render(<ContentModelEditorMainPane />, parent);
+    ReactDOM.render(<ContentModelEditorMainPane paneId="" />, parent);
 }

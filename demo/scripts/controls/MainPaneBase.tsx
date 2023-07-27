@@ -32,7 +32,10 @@ const POPOUT_FEATURES = 'menubar=no,statusbar=no,width=1200,height=800';
 const POPOUT_URL = 'about:blank';
 const POPOUT_TARGET = '_blank';
 
-export default abstract class MainPaneBase extends React.Component<{}, MainPaneBaseState> {
+export default abstract class MainPaneBase extends React.Component<
+    { paneId: string },
+    MainPaneBaseState
+> {
     private mouseX: number;
     private static instance: MainPaneBase;
     private popoutRoot: HTMLElement;
@@ -47,7 +50,7 @@ export default abstract class MainPaneBase extends React.Component<{}, MainPaneB
         return this.instance;
     }
 
-    constructor(props: {}) {
+    constructor(props: { paneId: string }) {
         super(props);
 
         MainPaneBase.instance = this;
