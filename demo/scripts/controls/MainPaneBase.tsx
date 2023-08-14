@@ -33,7 +33,7 @@ const POPOUT_URL = 'about:blank';
 const POPOUT_TARGET = '_blank';
 
 export default abstract class MainPaneBase extends React.Component<
-    { paneId: string },
+    { paneId: string; isDarkMode: boolean },
     MainPaneBaseState
 > {
     private mouseX: number;
@@ -45,16 +45,18 @@ export default abstract class MainPaneBase extends React.Component<
     protected snapshotPlugin: SnapshotPlugin;
     protected content: string = '';
     protected themeMatch = window.matchMedia?.('(prefers-color-scheme: dark)');
+    protected isDarkMode: boolean;
 
     static getInstance() {
         return this.instance;
     }
 
-    constructor(props: { paneId: string }) {
+    constructor(props: { paneId: string; isDarkMode: boolean }) {
         super(props);
 
         MainPaneBase.instance = this;
         this.updateContentPlugin = createUpdateContentPlugin(UpdateMode.OnDispose, this.onUpdate);
+        this.isDarkMode = props.isDarkMode;
     }
 
     abstract getStyles(isDark: boolean): Record<string, string>;
@@ -241,7 +243,7 @@ export default abstract class MainPaneBase extends React.Component<
 
     private onThemeChange = () => {
         this.setState({
-            isDarkMode: this.themeMatch?.matches || false,
+            isDarkMode: this.isDarkMode,
         });
     };
 }

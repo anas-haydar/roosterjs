@@ -1,19 +1,9 @@
+import { PartialTheme } from '@fluentui/react/lib/Theme';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import ApiPlaygroundPlugin from './sidePane/apiPlayground/ApiPlaygroundPlugin';
-import EditorOptionsPlugin from './sidePane/editorOptions/EditorOptionsPlugin';
-import EventViewPlugin from './sidePane/eventViewer/EventViewPlugin';
-import FormatPainterPlugin from './contentModel/plugins/FormatPainterPlugin';
-import FormatStatePlugin from './sidePane/formatState/FormatStatePlugin';
-import getToggleablePlugins from './getToggleablePlugins';
-import MainPaneBase from './MainPaneBase';
-import SnapshotPlugin from './sidePane/snapshot/SnapshotPlugin';
-import { arrayPush } from 'roosterjs-editor-dom';
-import { darkMode, DarkModeButtonStringKey } from './ribbonButtons/darkMode';
 import { Editor } from 'roosterjs-editor-core';
+import { arrayPush } from 'roosterjs-editor-dom';
 import { EditorOptions, EditorPlugin } from 'roosterjs-editor-types';
-import { PartialTheme } from '@fluentui/react/lib/Theme';
-import { zoom, ZoomButtonStringKey } from './ribbonButtons/zoom';
 import {
     AllButtonKeys,
     AllButtonStringKeys,
@@ -25,11 +15,21 @@ import {
     RibbonButton,
     RibbonPlugin,
 } from 'roosterjs-react';
+import FormatPainterPlugin from './contentModel/plugins/FormatPainterPlugin';
+import getToggleablePlugins from './getToggleablePlugins';
+import MainPaneBase from './MainPaneBase';
+import { zoom, ZoomButtonStringKey } from './ribbonButtons/zoom';
+import ApiPlaygroundPlugin from './sidePane/apiPlayground/ApiPlaygroundPlugin';
+import EditorOptionsPlugin from './sidePane/editorOptions/EditorOptionsPlugin';
+import EventViewPlugin from './sidePane/eventViewer/EventViewPlugin';
+import FormatStatePlugin from './sidePane/formatState/FormatStatePlugin';
+import SnapshotPlugin from './sidePane/snapshot/SnapshotPlugin';
 
 const styles = (isDark: boolean): Record<string, string> => {
     return !isDark ? require('./MainPane.scss') : require('./MainPane-dark.scss');
 };
-type RibbonStringKeys = AllButtonStringKeys | DarkModeButtonStringKey | ZoomButtonStringKey;
+type RibbonStringKeys = AllButtonStringKeys | ZoomButtonStringKey;
+// DarkModeButtonStringKey |
 // | ExportButtonStringKey;
 // | PopoutButtonStringKey;
 
@@ -100,7 +100,7 @@ class MainPane extends MainPaneBase {
     private mainWindowButtons: RibbonButton<RibbonStringKeys>[];
     private popoutWindowButtons: RibbonButton<RibbonStringKeys>[];
 
-    constructor(props: { paneId: string }) {
+    constructor(props: { paneId: string; isDarkMode: boolean }) {
         super(props);
 
         this.formatStatePlugin = new FormatStatePlugin();
@@ -113,15 +113,15 @@ class MainPane extends MainPaneBase {
         this.emojiPlugin = createEmojiPlugin();
         this.formatPainterPlugin = new FormatPainterPlugin();
 
-        this.mainWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom]);
-        this.popoutWindowButtons = getButtons([...AllButtonKeys, darkMode, zoom]);
+        this.mainWindowButtons = getButtons([...AllButtonKeys, zoom]);
+        this.popoutWindowButtons = getButtons([...AllButtonKeys, zoom]);
 
         this.state = {
             popoutWindow: null,
             showRibbon: true,
             initState: this.editorOptionPlugin.getBuildInPluginState(),
             scale: 1,
-            isDarkMode: this.themeMatch?.matches || false,
+            isDarkMode: this.isDarkMode,
             editorCreator: null,
             isRtl: false,
         };
@@ -187,6 +187,15 @@ class MainPane extends MainPaneBase {
     }
 }
 
-export function mount(paneId: string, parent: HTMLElement, callback?: Function) {
-    ReactDOM.render(<MainPane paneId={paneId} />, parent, callback ? callback() : null);
+export function mount(
+    paneId: string,
+    isDarkMode: boolean,
+    parent: HTMLElement,
+    callback?: Function
+) {
+    ReactDOM.render(
+        <MainPane paneId={paneId} isDarkMode={isDarkMode} />,
+        parent,
+        callback ? callback() : null
+    );
 }

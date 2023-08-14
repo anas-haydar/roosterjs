@@ -95,7 +95,7 @@ class ContentModelEditorMainPane extends MainPaneBase {
     private formatPainterPlugin: FormatPainterPlugin;
     private sampleEntityPlugin: SampleEntityPlugin;
 
-    constructor(props: { paneId: string }) {
+    constructor(props: { paneId: string; isDarkMode: boolean }) {
         super(props);
 
         this.formatStatePlugin = new ContentModelFormatStatePlugin();
@@ -203,5 +203,5 @@ class ContentModelEditorMainPane extends MainPaneBase {
 }
 
 export function mount(parent: HTMLElement) {
-    ReactDOM.render(<ContentModelEditorMainPane paneId="" />, parent);
+    ReactDOM.render(<ContentModelEditorMainPane paneId="" isDarkMode={true} />, parent);
 }
