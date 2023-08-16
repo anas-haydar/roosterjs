@@ -68,7 +68,8 @@ export default function Rooster(props: RoosterProps) {
     }, []);
 
     function exportEditorToWindow() {
-        (window as any)['roosterEditor'] = () => {
+        //expose editor to window as function
+        (window as any)[`roosterEditor_${props.id}`] = () => {
             return editor.current;
         };
     }

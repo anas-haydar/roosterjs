@@ -95,13 +95,13 @@ export default abstract class MainPaneBase extends React.Component<
     }
 
     exposeShowRibbonToConsole() {
-        (window as any)['showRibbon'] = (value: boolean) => {
+        (window as any)[`showRibbon_${this.props.paneId}`] = (value: boolean) => {
             return this.showRibbon(value);
         };
     }
 
     exposeToggleThemeToConsole() {
-        (window as any)['setDarkTheme'] = (value: boolean) => {
+        (window as any)[`setDarkTheme_${this.props.paneId}`] = (value: boolean) => {
             return this.setState({
                 isDarkMode: value,
             });
@@ -187,6 +187,7 @@ export default abstract class MainPaneBase extends React.Component<
                 <div style={editorStyles}>
                     {this.state.editorCreator && (
                         <Rooster
+                            id={this.props.paneId}
                             className={styles.editor}
                             plugins={allPlugins}
                             defaultFormat={this.state.initState.defaultFormat}
