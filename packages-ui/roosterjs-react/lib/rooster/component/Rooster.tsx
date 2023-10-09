@@ -32,7 +32,7 @@ export default function Rooster(props: RoosterProps) {
 
     React.useEffect(() => {
         if (editorDiv.current) {
-            editorDiv.current.id = 'contentDiv';
+            editorDiv.current.id = `contentDiv-${props.id}`;
         }
     }, []);
 
