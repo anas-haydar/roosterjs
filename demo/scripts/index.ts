@@ -13,4 +13,4 @@ import { mount as mountClassicalEditorMainPane } from './controls/MainPane';
     );
 };
 
-// mountClassicalEditorMainPane('demo', true, document.getElementById('mainPane'));
+mountClassicalEditorMainPane('demo', true, document.getElementById('mainPane'));
