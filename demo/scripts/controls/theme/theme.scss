@@ -2,13 +2,13 @@ $primaryColor: #0099aa;
 $primaryLighter: lighten($primaryColor, 5%);
 $primaryLighter2: lighten($primaryColor, 50%);
 $primaryBorder: #00bbcc;
-$primaryBackgroundColor: white;
+$primaryBackgroundColor: #ffffff;
 
 $primaryColorDark: #0091a1;
 $primaryLighterDark: lighten($primaryColorDark, 5%);
 $primaryLighter2Dark: lighten($primaryColorDark, 50%);
 $primaryBorderDark: #007b8b;
-$primaryBackgroundColorDark: #212529;
+$primaryBackgroundColorDark: #202124;
 
 @media (prefers-color-scheme: dark) {
     button {
